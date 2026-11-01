@@ -70,6 +70,12 @@ Headscale.
 The first start takes about half a minute; then open `http://localhost:47831` if your browser does not open by itself.
 Make your account. Nothing needs to be installed: Node.js comes in the `node` folder.
 
+**On a flash drive:** the app normally keeps your data in a folder of database files, and that folder does not work on
+an exFAT or FAT32 drive. On such a drive the app keeps the database in one file instead
+(`my-data\database-in-one-file.tar.gz`), by itself, and says so in the black window. That file is saved a few seconds
+after each change and when the app stops, so stop the app (Settings, or close the black window) before you take the
+drive out.
+
 ### Settings you may want
 Copy `settings.example.env` to `settings.env` and take out the `#` before any line you want to enable:
 - `ANTHROPIC_API_KEY`: your own Claude key, which turns the Claude features on. Without it they stay off. Keep this file private.

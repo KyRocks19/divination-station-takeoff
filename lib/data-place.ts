@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { localDbDir } from "./local-db-core";
+import { ONE_FILE_NAME, localDbDir } from "./local-db-core";
 
 // Where a portable copy keeps its data (docs/plan-feathered-edition.md 4.3): on the drive, beside the app (`my-data`, the first choice), or in a folder
 // in the person's own user folder on this computer. A small file on the drive, `my-data/where.txt`, holds only the other folder's path; the start
@@ -43,6 +43,8 @@ export function holdsData(dir: string): boolean {
   return (
     existsSync(/* turbopackIgnore: true */ join(dir, "feathered.sealed")) ||
     existsSync(/* turbopackIgnore: true */ join(dir, "feathered.sealed.previous")) ||
+    existsSync(/* turbopackIgnore: true */ join(dir, ONE_FILE_NAME)) ||
+    existsSync(/* turbopackIgnore: true */ join(dir, `${ONE_FILE_NAME}.previous`)) ||
     existsSync(/* turbopackIgnore: true */ join(dir, "database", "PG_VERSION"))
   );
 }

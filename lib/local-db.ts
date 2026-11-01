@@ -1,10 +1,10 @@
-import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { NewerDataError, applyMigrations, migrationState } from "./migrations";
 import { backupName, backupsDirFor, namesToPrune, parseBackupName } from "./local-backup-core";
 import { seedSharedData } from "./local-seed";
 import { acquireLock } from "./local-lock";
-import { Lease, errorText, openFailureMessage, pgShaped } from "./local-db-core";
+import { Lease, ONE_FILE_NAME, errorText, isFileError, openFailureMessage, pgShaped } from "./local-db-core";
 import { makeHeader, newDataKey, openSealed, sealBytes } from "./seal-core";
 import {
   SealLockedError,
@@ -29,6 +29,10 @@ import {
 // A copy whose data is locked (lib/seal.ts, docs/plan-feathered-edition.md 4.2) has no folder: its database is one sealed file, opened into memory with
 // the key, and written back, sealed, a few seconds after each change and whenever it is locked or stopped. A new Feathered copy runs in memory until
 // set-up decides which of the two it will be (`makeSealed` or `makeFolder`), so nothing is written before the person has chosen.
+//
+// A drive that cannot hold a database folder (exFAT and FAT32 flash drives on Windows: PGlite fails with EINVAL, open item ED22) gets the same
+// arrangement without the lock: the database runs in memory and is saved as one plain file beside the folder (ONE_FILE_NAME), a few seconds after
+// each change and whenever the app stops. That happens by itself, and only when the folder never held a finished database.
 
 interface PgliteLike {
   waitReady: Promise<void>;
@@ -38,8 +42,35 @@ interface PgliteLike {
   close(): Promise<void>;
 }
 
-/** Where the database is: a folder, the sealed file (opened in memory), or only memory (a new Feathered copy before set-up). */
-export type LocalMode = "folder" | "sealed" | "memory";
+/** Where the database is: a folder, the sealed file (opened in memory), one plain file (opened in memory), or only memory (a new Feathered copy before set-up). */
+export type LocalMode = "folder" | "sealed" | "file" | "memory";
+
+/** The one plain file a copy on a drive that cannot hold the database folder keeps its database in, beside that folder. */
+export const oneFilePathFor = (dbDir: string) => join(/* turbopackIgnore: true */ dirname(dbDir.replace(/[\\/]+$/, "")), ONE_FILE_NAME);
+
+/** Writes the one plain file safely: a temporary name first, and the file it replaces kept as `.previous`. */
+function writeOneFile(dbDir: string, bytes: Uint8Array): void {
+  const p = oneFilePathFor(dbDir);
+  writeFileSync(/* turbopackIgnore: true */ `${p}.tmp`, bytes);
+  if (existsSync(/* turbopackIgnore: true */ p)) renameSync(/* turbopackIgnore: true */ p, `${p}.previous`);
+  renameSync(/* turbopackIgnore: true */ `${p}.tmp`, p);
+}
+
+/** Reads the one plain file, or its previous version when a stop half-way left only that. */
+function readOneFile(dbDir: string): Uint8Array {
+  const p = oneFilePathFor(dbDir);
+  return new Uint8Array(readFileSync(/* turbopackIgnore: true */ existsSync(/* turbopackIgnore: true */ p) ? p : `${p}.previous`));
+}
+
+const oneFileExists = (dbDir: string) => existsSync(/* turbopackIgnore: true */ oneFilePathFor(dbDir)) || existsSync(/* turbopackIgnore: true */ `${oneFilePathFor(dbDir)}.previous`);
+
+function removeOneFiles(dbDir: string): void {
+  const p = oneFilePathFor(dbDir);
+  for (const f of [p, `${p}.previous`, `${p}.tmp`]) rmSync(/* turbopackIgnore: true */ f, { force: true });
+}
+
+/** Whether `dir` holds a finished Postgres data directory. PG_VERSION alone is written early, so an opening that failed half-way can leave it behind. */
+const holdsFinishedDatabase = (dir: string) => existsSync(/* turbopackIgnore: true */ join(dir, "global", "pg_control"));
 
 /** After a change, a locked copy is saved once nothing has changed for this long, and at the latest this long after the first unsaved change. */
 export const SAVE_IDLE_MS = 3_000;
@@ -88,7 +119,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
   let mode: LocalMode | null = null;
   // The lock that keeps a second process from opening this folder (lib/local-lock.ts); held from the first opening until `end`.
   let unlock: (() => void) | null = null;
-  // A locked copy's unsaved changes (see SAVE_IDLE_MS).
+  // A locked (or one-file) copy's unsaved changes (see SAVE_IDLE_MS).
   let dirty = false;
   let firstChange = 0;
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -96,6 +127,8 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
   /** Which mode the files on disk call for now. */
   function modeOnDisk(): LocalMode {
     if (sealFileExists(dir)) return "sealed";
+    // Before the folder: when the one file is there, the folder beside it is what an opening that failed left behind.
+    if (oneFileExists(dir)) return "file";
     if (existsSync(/* turbopackIgnore: true */ join(dir, "PG_VERSION"))) return "folder";
     return startInMemory ? "memory" : "folder";
   }
@@ -110,22 +143,46 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
         const key = sealKey();
         if (!key) throw new SealLockedError();
         source ??= new Uint8Array(openSealed(readSealFile(dir), key));
+      } else if (as === "file") {
+        source ??= oneFileExists(dir) ? readOneFile(dir) : undefined;
       } else if (as === "folder") {
         mkdirSync(dir, { recursive: true });
       }
       // Loaded here, not at the top of the file, so a hosted copy never loads the WebAssembly files.
       const { PGlite } = await import("@electric-sql/pglite");
       const { unaccent } = await import("@electric-sql/pglite/contrib/unaccent");
-      // A file problem inside PGlite is thrown as an object with only a number (ErrnoError): turn it into a message that says what went wrong and where.
+      const start = async (where: LocalMode): Promise<PgliteLike> => {
+        // A file problem inside PGlite is thrown as an object with only a number (ErrnoError): turn it into a message that says what went wrong and where.
+        try {
+          const started = new PGlite(where === "folder" ? dir : "memory://", {
+            extensions: { unaccent },
+            ...(source ? { loadDataDir: new Blob([source as BlobPart]) } : {}),
+          }) as unknown as PgliteLike;
+          await started.waitReady;
+          return started;
+        } catch (err) {
+          throw new Error(openFailureMessage(where === "folder" ? dir : `the ${where} database`, err), { cause: err });
+        }
+      };
+      const hadDatabase = as === "folder" && holdsFinishedDatabase(dir);
+      // Whether the one file has to be written at the end of this opening (a new one, or one this opening turned to).
+      let writeFile = as === "file" && !oneFileExists(dir);
       let db: PgliteLike;
       try {
-        db = new PGlite(as === "folder" ? dir : "memory://", {
-          extensions: { unaccent },
-          ...(source ? { loadDataDir: new Blob([source as BlobPart]) } : {}),
-        }) as unknown as PgliteLike;
-        await db.waitReady;
+        db = await start(as);
       } catch (err) {
-        throw new Error(openFailureMessage(as === "folder" ? dir : `the ${as} database`, err), { cause: err });
+        // Only a folder that never held a finished database, and only for a file problem: data that is there is never set aside for an empty file.
+        if (as !== "folder" || hadDatabase || !isFileError((err as { cause?: unknown }).cause)) throw err;
+        console.warn(`[local-db] ${(err as Error).message}`);
+        try {
+          moveAside(dir, "unusable");
+        } catch {
+          /* still in use, or the drive refuses: the one file is used first from now on (modeOnDisk), so the folder is only in the way */
+        }
+        as = "file";
+        writeFile = true;
+        db = await start("file");
+        console.warn(`[local-db] This drive cannot hold the database folder, so the database is kept in one file instead: ${oneFilePathFor(dir)}. It is saved a few seconds after each change and when the app stops: stop the app before you take the drive out.`);
       }
       mode = as;
       // An update brings new migrations to data that already has some: keep a copy of the data as it was before they run (ED9).
@@ -152,6 +209,8 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
       if (seeded.bundle === "unusable") console.warn(`[local-db] the reference bundle could not be used: ${seeded.problems.join(" | ")}`);
       // Migrations and seeding changed a locked copy in memory: write them to the sealed file.
       if (as === "sealed" && (applied.length || seeded.pieces || seeded.concepts)) changed();
+      // The one file is written here, not by a timer: `ready` is this very opening, so saveHeld would wait for itself.
+      if (as === "file" && (writeFile || applied.length || seeded.pieces || seeded.concepts)) writeOneFile(dir, await dumpOf(db));
       return db;
     })();
     ready = opening;
@@ -172,22 +231,36 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
     return open();
   }
 
-  /** Notes a change to a locked copy and arranges its save. */
+  /** Notes a change to a locked (or one-file) copy and arranges its save. */
   function changed() {
-    if (mode !== "sealed") return;
+    if (mode !== "sealed" && mode !== "file") return;
     dirty = true;
     const now = Date.now();
     if (!firstChange) firstChange = now;
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       timer = null;
-      void pool.saveNow().catch((err) => console.warn(`[local-db] could not save the locked data: ${errorText(err)}`));
+      void pool.saveNow().catch((err) => console.warn(`[local-db] could not save the ${mode === "file" ? "data file" : "locked data"}: ${errorText(err)}`));
     }, Math.max(0, Math.min(SAVE_IDLE_MS, firstChange + SAVE_MAX_MS - now)));
     timer.unref?.();
   }
 
-  /** Writes a locked copy's database to its sealed file. The caller holds the lease. */
+  /** Writes a locked copy's database to its sealed file, or a one-file copy's to its file. The caller holds the lease. */
   async function saveHeld(): Promise<boolean> {
+    if (mode === "file" && dirty && ready) {
+      const db = await ready;
+      dirty = false;
+      firstChange = 0;
+      if (timer) clearTimeout(timer);
+      timer = null;
+      try {
+        writeOneFile(dir, await dumpOf(db));
+      } catch (err) {
+        dirty = true;
+        throw err;
+      }
+      return true;
+    }
     if (mode !== "sealed" || !dirty || !ready) return false;
     const key = sealKey();
     const header = sealHeader();
@@ -222,7 +295,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
         return {
           query: async (sql: string, params?: unknown[]) => {
             const result = pgShaped(await db.query(sql, params));
-            if (mode === "sealed" && changesData(sql)) changed();
+            if ((mode === "sealed" || mode === "file") && changesData(sql)) changed();
             return result;
           },
           release: () => release(),
@@ -238,7 +311,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
     async end() {
       const release = await lease.take();
       try {
-        await saveHeld().catch((err) => console.warn(`[local-db] could not save the locked data: ${errorText(err)}`));
+        await saveHeld().catch((err) => console.warn(`[local-db] could not save the ${mode === "file" ? "data file" : "locked data"}: ${errorText(err)}`));
         await closeHeld();
       } finally {
         release();
@@ -250,10 +323,10 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
     /** Where the database is now (null before it has been opened, or while the copy is locked). */
     mode: (): LocalMode | null => mode,
 
-    /** True while changes to a locked copy wait to be written. */
+    /** True while changes to a locked (or one-file) copy wait to be written. */
     unsaved: () => dirty,
 
-    /** Writes a locked copy's unsaved changes now (at a quick exit, a stop, or on a timer). True when something was written. */
+    /** Writes a locked (or one-file) copy's unsaved changes now (at a quick exit, a stop, or on a timer). True when something was written. */
     async saveNow(): Promise<boolean> {
       const release = await lease.take();
       try {
@@ -287,6 +360,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
         const db = await current();
         if (mode === "sealed") throw new Error("The data is already locked.");
         const wasFolder = mode === "folder";
+        const wasFile = mode === "file";
         const plain = await dumpOf(db);
         const key = newDataKey();
         const header = { ...makeHeader(key, passphrase, codes), u: owner };
@@ -295,6 +369,9 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
         await closeHeld();
         // Only a folder that holds a Postgres data directory is ever emptied here; the sealed file has everything in it now.
         if (wasFolder && existsSync(/* turbopackIgnore: true */ join(dir, "PG_VERSION"))) rmSync(/* turbopackIgnore: true */ dir, { recursive: true, force: true });
+        // The plain file would otherwise keep an unlocked copy of everything beside the sealed one.
+        if (wasFile) removeOneFiles(dir);
+        dirty = false;
         await open(plain, "sealed");
         sealFilesBeside(dir, artDir, key, header);
       } finally {
@@ -312,7 +389,9 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
         const key = sealKey();
         await closeHeld();
         moveAside(dir, "before-unlock");
+        // On a drive that cannot hold the folder this becomes the one file instead (see the top of this file).
         await open(plain, "folder");
+        if ((mode as LocalMode | null) === "folder") removeOneFiles(dir);
         if (key) openFilesBeside(dir, artDir, key);
         removeSealFiles(dir);
         forgetKey();
@@ -370,7 +449,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
           await open(before, as);
           throw new Error(`That backup could not be opened, so nothing was changed (${errorText(err)}).`);
         }
-        if (as === "sealed") {
+        if (as === "sealed" || mode === "file") {
           dirty = true;
           await saveHeld();
         }
