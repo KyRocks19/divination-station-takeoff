@@ -23,7 +23,7 @@ Leave the black window open while you use the app. To stop it, use **Stop and re
 ## On a flash drive
 Copy the whole folder to the drive. If you will plug the drive into more than one kind of computer (a Windows computer at home and a Mac elsewhere, say), get the **any computer** download instead: it starts on Windows, Mac and Linux, and it is larger. Format the drive as **exFAT** if you can: Windows, Mac and Linux can all read and write it. A FAT32 drive works on Windows but cannot mark the Mac and Linux start files as runnable.
 
-**Keep your writing locked on a flash drive.** A locked copy keeps everything in one sealed file, which any drive can hold. An unlocked copy keeps a folder of database files instead, and that folder does not work on an exFAT or FAT32 drive: the black window says the database could not be opened. If you want it unlocked, use an NTFS drive (Windows computers only).
+A locked copy keeps everything in one sealed file. An unlocked copy keeps a folder of database files, which does not work on an exFAT or FAT32 drive, so on such a drive it keeps one plain file instead (`my-data/database-in-one-file.tar.gz`) and says so in the black window. Either file is saved a few seconds after each change and when the app stops.
 
 Your writing is kept in the `my-data` folder beside the app, on the drive. Nothing of yours is written to the computer.
 

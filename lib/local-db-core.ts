@@ -28,6 +28,9 @@ export function pgShaped<R>(result: { rows: R[]; affectedRows?: number }): { row
   return { rows: result.rows, rowCount: result.affectedRows ?? result.rows.length };
 }
 
+/** The name of the one plain file that keeps the database on a drive that cannot hold its folder (lib/local-db.ts), beside the folder. */
+export const ONE_FILE_NAME = "database-in-one-file.tar.gz";
+
 /** Whether this copy asked for its data to live in a folder on the computer (DS_DB_DIR) instead of a Postgres server. */
 export function localDbDir(env: string | undefined = process.env.DS_DB_DIR): string | null {
   const dir = env?.trim();
