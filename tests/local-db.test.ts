@@ -134,3 +134,10 @@ test("local-db.ts wraps the PGlite opening, and the db and backup logs use error
   assert.match(read("lib/local-db.ts"), /openFailureMessage\(/);
   for (const f of ["lib/db.ts", "lib/local-backup.ts", "lib/local-db.ts"]) assert.doesNotMatch(read(f), /err instanceof Error \? err\.message : (String\()?err/, f);
 });
+
+test("an EINVAL from the database folder points at the drive's file system", () => {
+  const msg = openFailureMessage("G:\\my-data\\database", { name: "ErrnoError", errno: 28 });
+  assert.match(msg, /\(EINVAL\)/);
+  assert.match(msg, /exFAT and FAT32/);
+  assert.match(msg, /NTFS/);
+});

@@ -64,7 +64,9 @@ function fileHint(code: string): string | null {
   if (code === "ENOSPC") return "Make room on the drive and start again.";
   if (code === "ENOENT") return "The data folder may be incomplete, for example copied while the app was running or only partly copied.";
   if (code === "EIO") return "The drive may be failing or was removed while in use.";
-  if (code === "EMLINK" || code === "ENOSYS") return "Keep the data on a drive formatted as NTFS or exFAT (Settings, Move my data, or DS_DATA in settings.env).";
+  // EINVAL is also what PGlite reports for any Windows error Node.js cannot name, which is what an exFAT or FAT32 drive gives for the database folder.
+  if (code === "EINVAL" || code === "EMLINK" || code === "ENOSYS")
+    return "The drive's file system may not support a database folder: exFAT and FAT32 drives do not. Use a drive formatted as NTFS, or keep the data on this computer (DS_DATA in settings.env).";
   return null;
 }
 

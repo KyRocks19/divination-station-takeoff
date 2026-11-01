@@ -45,7 +45,8 @@ your own drawn or uploaded pictures, export and backups. No AI, and it connects 
   password and your recovery codes, nobody can get your writing back.
 - **The quick hide:** press **Hide** at the top of any page, or Esc twice. The app signs you out, locks your writing and
   shows a small snake game. To come back, play a round and type your password as the high-score name.
-- **On a flash drive,** format the drive as exFAT if you can, and press **Stop and remove the drive** before you take it out.
+- **On a flash drive,** format the drive as exFAT if you can, keep your writing locked (an unlocked copy keeps a folder
+  of database files, which does not work on exFAT or FAT32), and press **Stop and remove the drive** before you take it out.
 
 The full guide, including what the app leaves on a computer and how to move to Winged, is
 [`docs/feathered-guide.md`](docs/feathered-guide.md). It comes in the download as `README.md`.
@@ -69,6 +70,11 @@ Headscale.
 
 The first start takes about half a minute; then open `http://localhost:47831` if your browser does not open by itself.
 Make your account. Nothing needs to be installed: Node.js comes in the `node` folder.
+
+**On a flash drive:** Winged keeps your data in a folder of database files, and that folder does not work on an exFAT or
+FAT32 drive (seen on Windows: the start window says the database could not be opened). Use a drive formatted as NTFS
+(Windows computers only), keep the data on the computer with `DS_DATA` in `settings.env`, or use Feathered with your
+writing locked, which keeps everything in one file.
 
 ### Settings you may want
 Copy `settings.example.env` to `settings.env` and take out the `#` before any line you want to enable:
