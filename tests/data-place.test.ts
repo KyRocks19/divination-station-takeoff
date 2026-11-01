@@ -70,3 +70,12 @@ test("the start files read the note, and stop with a plain message when its fold
   assert.match(src, /Your data for this copy is kept on another computer/);
   assert.match(read("app/api/local/move/route.ts"), /if \(holdsData\(target\)\)/, "a move never overwrites data that is already there");
 });
+
+test("the start files warn when the settings were saved as settings.env.txt", () => {
+  const src = read("scripts/build-local-package.ts");
+  assert.match(src, /if exist "%~dp0settings\.env\.txt" if not exist "%~dp0settings\.env" echo Found settings\.env\.txt/);
+  assert.match(src, /if \[ -f "\$HERE\/settings\.env\.txt" \] && \[ ! -f "\$HERE\/settings\.env" \]/);
+  // A bare ( or ) in the echo would end a batch block; & or > would split or redirect the line.
+  const line = src.split("\n").find((l) => l.includes("Found settings.env.txt but no settings.env") && l.includes("%~dp0"))!;
+  assert.doesNotMatch(line.slice(line.indexOf(" echo ")), /[()&<>|]/);
+});
