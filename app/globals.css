@@ -473,33 +473,6 @@ html, body {
   95.83%  { transform: translateX(-5.8px); }
   100%    { transform: translateX(-6px); }
 }
-@keyframes rv-shuffle {
-  0%      { transform: translateX(0px) rotate(0deg); }
-  4.17%   { transform: translateX(-8.8px) rotate(-1.55deg); }
-  8.33%   { transform: translateX(-17px) rotate(-3deg); }
-  12.5%   { transform: translateX(-24.04px) rotate(-4.24deg); }
-  16.67%  { transform: translateX(-29.44px) rotate(-5.2deg); }
-  20.83%  { transform: translateX(-32.84px) rotate(-5.8deg); }
-  25%     { transform: translateX(-34px) rotate(-6deg); }
-  29.17%  { transform: translateX(-32.84px) rotate(-5.8deg); }
-  33.33%  { transform: translateX(-29.44px) rotate(-5.2deg); }
-  37.5%   { transform: translateX(-24.04px) rotate(-4.24deg); }
-  41.67%  { transform: translateX(-17px) rotate(-3deg); }
-  45.83%  { transform: translateX(-8.8px) rotate(-1.55deg); }
-  50%     { transform: translateX(0px) rotate(0deg); }
-  54.17%  { transform: translateX(8.8px) rotate(1.55deg); }
-  58.33%  { transform: translateX(17px) rotate(3deg); }
-  62.5%   { transform: translateX(24.04px) rotate(4.24deg); }
-  66.67%  { transform: translateX(29.44px) rotate(5.2deg); }
-  70.83%  { transform: translateX(32.84px) rotate(5.8deg); }
-  75%     { transform: translateX(34px) rotate(6deg); }
-  79.17%  { transform: translateX(32.84px) rotate(5.8deg); }
-  83.33%  { transform: translateX(29.44px) rotate(5.2deg); }
-  87.5%   { transform: translateX(24.04px) rotate(4.24deg); }
-  91.67%  { transform: translateX(17px) rotate(3deg); }
-  95.83%  { transform: translateX(8.8px) rotate(1.55deg); }
-  100%    { transform: translateX(0px) rotate(0deg); }
-}
 @keyframes rv-wobble {
   0%      { transform: rotate(-5deg); }
   4.17%   { transform: rotate(-4.83deg); }
@@ -734,9 +707,6 @@ html, body {
 }
 .rv-spread  { animation: rv-spread-loop 4.4s ease-out infinite both; transform-box: fill-box; transform-origin: center; }
 .rv-late    { animation-delay: 1.2s; }
-.rv-shuffle   { animation: rv-shuffle 1.6s linear infinite; }
-.rv-shuffle-1 { animation-delay: -0.2s; }
-.rv-shuffle-2 { animation-delay: -0.4s; }
 .rv-wobble  { animation: rv-wobble 1.2s linear infinite; }
 .rv-hop     { animation: rv-hop 1.2s linear infinite; }
 .rv-hop-1   { animation-delay: -0.3s; }

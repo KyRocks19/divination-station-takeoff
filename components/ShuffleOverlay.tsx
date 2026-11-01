@@ -2,13 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { styleRef } from "@/lib/apply-style";
-import { SigilMark } from "@/components/ui/AppSigil";
+import ShuffleDeck from "@/components/ShuffleDeck";
 import { Button } from "@/components/ui/Button";
 import { COVERED_WORDS } from "@/lib/reveal-core";
-
-const ANIMATIONS = ["shuffle-0", "shuffle-1", "shuffle-2", "shuffle-3", "shuffle-4"];
-/** One pass of the cards, at its normal speed; the pass loops for the whole wait (owner's request, 2026-10-29). */
-const SHUFFLE_SECONDS = 1.5;
 
 /** The least time the shuffle shows, in milliseconds (15 s more than the old 1.8 s). "I am ready" and Escape end it early. */
 export const SHUFFLE_MS = 16800;
@@ -60,29 +56,7 @@ export default function ShuffleOverlay({ count, group = "deck", one = "card", ma
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-canvas/96 backdrop-blur-sm [animation:overlay-fade-in_0.25s_ease-out]">
       <div role="status" aria-label={phase === "shuffle" ? `${verb} the ${group}` : drawing} className="flex flex-col items-center">
-        {/* Card deck */}
-        <div className="relative w-[120px] h-[200px]">
-          {ANIMATIONS.map((name, i) => (
-            <div
-              key={i}
-              aria-hidden="true"
-              className="absolute inset-0 rounded-xl border-2 border-line-accent shadow-xl shadow-tone-900/60 [background:linear-gradient(135deg,#1a1045_0%,#0d0d26_100%)]"
-              ref={styleRef({
-                animation: `${name} ${SHUFFLE_SECONDS}s ease-in-out infinite`,
-                // A negative delay starts each card part-way through its pass, so none waits still at the start.
-                animationDelay: `${-i * 0.1}s`,
-                zIndex: 5 - i,
-              })}
-            >
-              {/* Card back decoration */}
-              <div className="absolute inset-[6px] rounded-lg border border-line">
-                <div className="absolute inset-[6px] rounded-md border border-tone-600/20 flex items-center justify-center">
-                  <SigilMark className="text-tone-500/60 text-xl select-none" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ShuffleDeck />
 
         {/* Status text */}
         <div className="mt-14 text-center space-y-3">
