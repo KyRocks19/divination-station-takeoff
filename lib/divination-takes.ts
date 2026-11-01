@@ -1,4 +1,4 @@
-// The takes on divination a person kept (migration 098), in the database. Server code only. Every query is for one person
+// The takes on divination a person kept (migration 098) or hid (migration 105), in the database. Server code only. Every query is for one person
 // (`userId` from the session). The takes and the rules are in lib/divination-takes-core.ts.
 
 import { query, queryOne } from "./db";
@@ -21,7 +21,62 @@ export async function setTakeKept(userId: number, takeId: string, kept: boolean)
   const n = await queryOne<{ n: string }>("SELECT COUNT(*) AS n FROM user_divination_takes WHERE user_id = $1", [userId]);
   if (Number(n?.n ?? 0) >= MAX_KEPT_TAKES) return "limit";
   await query("INSERT INTO user_divination_takes (user_id, take_id) VALUES ($1, $2) ON CONFLICT DO NOTHING", [userId, takeId]);
+  // A take the person keeps is one they want to see, so keeping it shows it again if they had hidden it.
+  await ignoreNotThereYet(query("DELETE FROM user_hidden_divination_takes WHERE user_id = $1 AND take_id = $2", [userId, takeId]));
   return "ok";
+}
+
+// ---------------------------------------------------------------- takes the person hid (migration 105)
+
+/** Whether the error means migration 105 is not on this database yet. */
+function notThereYet(err: unknown): boolean {
+  return (err as { code?: string } | null)?.code === "42P01";
+}
+
+async function ignoreNotThereYet(p: Promise<unknown>): Promise<void> {
+  try {
+    await p;
+  } catch (err) {
+    if (!notThereYet(err)) throw err;
+  }
+}
+
+/** The ids this person hid, newest first. Empty before migration 105. Ids no longer in the list are left out. */
+export async function hiddenTakeIds(userId: number): Promise<string[]> {
+  try {
+    const rows = await query<{ take_id: string }>("SELECT take_id FROM user_hidden_divination_takes WHERE user_id = $1 ORDER BY created_at DESC, take_id", [userId]);
+    return rows.map((r) => r.take_id).filter(isTakeId);
+  } catch (err) {
+    if (notThereYet(err)) return [];
+    throw err;
+  }
+}
+
+/** Hides (`hidden` true) or shows again one take for this person. Hiding a kept take lets go of it too. Doing either twice is not an error. */
+export async function setTakeHidden(userId: number, takeId: string, hidden: boolean): Promise<KeepResult> {
+  try {
+    if (!hidden) {
+      await query("DELETE FROM user_hidden_divination_takes WHERE user_id = $1 AND take_id = $2", [userId, takeId]);
+      return "ok";
+    }
+    // There are only as many takes as the list holds, so no limit is needed beyond isTakeId in the route.
+    await query("INSERT INTO user_hidden_divination_takes (user_id, take_id) VALUES ($1, $2) ON CONFLICT DO NOTHING", [userId, takeId]);
+    await query("DELETE FROM user_divination_takes WHERE user_id = $1 AND take_id = $2", [userId, takeId]);
+    return "ok";
+  } catch (err) {
+    if (notThereYet(err)) return "unavailable";
+    throw err;
+  }
+}
+
+/** For the data export: what this person hid, newest first. Empty before migration 105. */
+export async function hiddenTakesForExport(userId: number): Promise<{ take_id: string; created_at: string }[]> {
+  try {
+    return await query("SELECT take_id, created_at FROM user_hidden_divination_takes WHERE user_id = $1 ORDER BY created_at DESC, take_id", [userId]);
+  } catch (err) {
+    if (notThereYet(err)) return [];
+    throw err;
+  }
 }
 
 /** For the data export: what this person kept, newest first. */

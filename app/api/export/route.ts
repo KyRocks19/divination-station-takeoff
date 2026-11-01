@@ -20,8 +20,8 @@ import { getRecent } from "@/lib/recent-searches";
 import { recentMarkdown, shapeRecentExport } from "@/lib/recent-searches-core";
 import { hiddenForExport } from "@/lib/hidden-links";
 import { hiddenMarkdown, shapeHiddenExport } from "@/lib/hidden-links-core";
-import { keptMarkdown, ownMarkdownLines, shapeKeptExport, shapeOwnExport } from "@/lib/divination-takes-core";
-import { keptTakesForExport, listOwnTakes } from "@/lib/divination-takes";
+import { hiddenTakesMarkdown, keptMarkdown, ownMarkdownLines, shapeHiddenTakesExport, shapeKeptExport, shapeOwnExport } from "@/lib/divination-takes-core";
+import { hiddenTakesForExport, keptTakesForExport, listOwnTakes } from "@/lib/divination-takes";
 import { symbolLabel } from "@/lib/piece-labels";
 import { getArchetype } from "@/lib/archetypes-data";
 import type { DrawnCard, ClarifierMap } from "@/lib/reading-context";
@@ -155,6 +155,7 @@ export async function GET(request: NextRequest) {
   for (const h of hiddenLinks.hidden_shared_links) h.archetype = getArchetype(h.archetype)?.name ?? h.archetype;
   const keptTakes = shapeKeptExport(await keptTakesForExport(userId));
   const ownTakes = shapeOwnExport(await listOwnTakes(userId));
+  const hiddenTakes = shapeHiddenTakesExport(await hiddenTakesForExport(userId));
 
   const stamp = new Date().toISOString().slice(0, 10);
 
@@ -181,6 +182,7 @@ export async function GET(request: NextRequest) {
       ...hiddenLinks,
       ...keptTakes,
       ...ownTakes,
+      ...hiddenTakes,
     };
     return new Response(JSON.stringify(data, null, 2), {
       headers: {
@@ -229,6 +231,7 @@ export async function GET(request: NextRequest) {
   out.push(...hiddenMarkdown(hiddenLinks));
   out.push(...ownMarkdownLines(ownTakes));
   out.push(...keptMarkdown(keptTakes));
+  out.push(...hiddenTakesMarkdown(hiddenTakes));
 
   if (cardMeanings.length) {
     out.push(``, `## Your card meanings`);

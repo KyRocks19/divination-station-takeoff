@@ -28,7 +28,7 @@ import { toolsLeftOut } from "@/lib/divination-kinds";
 import { loadHomeThemes } from "@/lib/patterns";
 import AppSigil from "@/components/ui/AppSigil";
 import { HomeTake } from "@/components/DivinationTakes";
-import { keptTakeIds, listOwnTakes } from "@/lib/divination-takes";
+import { hiddenTakeIds, keptTakeIds, listOwnTakes } from "@/lib/divination-takes";
 
 /** One line in "Recent Readings": a tarot reading or a reading made with another tool. */
 interface RecentReading {
@@ -150,7 +150,7 @@ export default async function HomePage({
         <AppSigil className="h-24 w-24 mx-auto text-heading" />
         <h1 className="text-4xl font-bold text-heading tracking-wide">Divination Station</h1>
         {/* A take on divination, a different one each visit, which the person can keep; their own takes come round too (lib/divination-takes-core.ts). */}
-        <HomeTake seed={Math.floor(Math.random() * 2147483646)} kept={await keptTakeIds(session.userId!)} own={await listOwnTakes(session.userId!)} />
+        <HomeTake seed={Math.floor(Math.random() * 2147483646)} kept={await keptTakeIds(session.userId!)} hidden={await hiddenTakeIds(session.userId!)} own={await listOwnTakes(session.userId!)} />
         <SkyLine className="justify-center" />
       </div>
 

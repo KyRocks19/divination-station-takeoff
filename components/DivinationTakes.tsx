@@ -5,40 +5,61 @@ import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Field, Input } from "@/components/ui/Field";
 import {
-  DIVINATION_SLUG, OWN_TAKE_MAX_LENGTH, OWN_TONE_LABEL, TAKES, TONE_LABELS, TONE_ORDER, cleanOwnTake, homeOrder, nextTakeIndex, takeById,
-  type DivinationTake, type OwnTake,
+  DIVINATION_SLUG, OWN_TAKE_MAX_LENGTH, OWN_TONE_LABEL, TAKES, TONE_LABELS, TONE_ORDER, cleanOwnTake, homeOrder, nextVisibleIndex, takeById,
+  visibleTakes, type DivinationTake, type OwnTake, type TakeSlot,
 } from "@/lib/divination-takes-core";
 
 // The takes on divination (lib/divination-takes-core.ts): one under the home page title, and every one on the Divination
-// archetype page, each with a Keep button. Keeping saves at once (PUT or DELETE /api/divination-takes/<id>); a press that
-// cannot be saved puts the button back and says so. The person's own takes (/api/own-takes) are written and deleted on the
-// Divination page, and come round on the home page among the others (homeOrder).
+// archetype page, each with Keep and Hide buttons. Keeping saves at once (PUT or DELETE /api/divination-takes/<id>), and so
+// does hiding (PUT or DELETE /api/divination-takes/<id>/hidden); a press that cannot be saved puts the button back and says
+// so. A take is never kept and hidden at once: keeping a hidden take shows it again, and hiding a kept take lets go of it.
+// The person's own takes (/api/own-takes) are written and deleted on the Divination page, and come round on the home page
+// among the others (homeOrder).
 
-function useKept(initial: string[]) {
-  const [kept, setKept] = useState<Set<string>>(() => new Set(initial));
+type Choice = "keep" | "hide";
+
+function useTakeChoices(initialKept: string[], initialHidden: string[]) {
+  const [kept, setKept] = useState<Set<string>>(() => new Set(initialKept));
+  const [hidden, setHidden] = useState<Set<string>>(() => new Set(initialHidden));
   const [message, setMessage] = useState({ text: "", n: 0 });
   const busy = useRef(new Set<string>());
   const say = (text: string) => setMessage((m) => ({ text, n: m.n + 1 }));
 
-  async function toggle(take: DivinationTake) {
-    if (busy.current.has(take.id)) return;
+  const put = (setter: typeof setKept, id: string, on: boolean) =>
+    setter((s) => {
+      if (s.has(id) === on) return s;
+      const next = new Set(s);
+      if (on) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+
+  /** Saves one choice for one take. True when it was saved; on failure both buttons are put back as they were. */
+  async function choose(take: DivinationTake, choice: Choice, on: boolean): Promise<boolean> {
+    if (busy.current.has(take.id)) return false;
     busy.current.add(take.id);
-    const keep = !kept.has(take.id);
-    const flip = (on: boolean) =>
-      setKept((k) => {
-        const next = new Set(k);
-        if (on) next.add(take.id);
-        else next.delete(take.id);
-        return next;
-      });
-    flip(keep);
+    const wasKept = kept.has(take.id);
+    const wasHidden = hidden.has(take.id);
+    if (choice === "keep") {
+      put(setKept, take.id, on);
+      if (on) put(setHidden, take.id, false);
+    } else {
+      put(setHidden, take.id, on);
+      if (on) put(setKept, take.id, false);
+    }
     try {
-      const res = await fetch(`/api/divination-takes/${encodeURIComponent(take.id)}`, { method: keep ? "PUT" : "DELETE" });
+      const url = `/api/divination-takes/${encodeURIComponent(take.id)}${choice === "hide" ? "/hidden" : ""}`;
+      const res = await fetch(url, { method: on ? "PUT" : "DELETE" });
       if (!res.ok) throw new Error();
-      say(keep ? "Kept. It is with your takes on the Divination page." : "Taken out of your kept takes.");
+      if (choice === "keep") say(on ? "Kept. It is with your takes on the Divination page." : "Taken out of your kept takes.");
+      else say(on ? "Hidden. It will not come round on the home page; you can show it again on the Divination page." : "Shown again. It can come round on the home page.");
+      return true;
     } catch {
-      flip(!keep);
-      say(keep ? "Could not keep that take. Nothing changed; try again." : "Could not take that out. It is still kept; try again.");
+      put(setKept, take.id, wasKept);
+      put(setHidden, take.id, wasHidden);
+      if (choice === "keep") say(on ? "Could not keep that take. Nothing changed; try again." : "Could not take that out. It is still kept; try again.");
+      else say(on ? "Could not hide that take. Nothing changed; try again." : "Could not show that take again. It is still hidden; try again.");
+      return false;
     } finally {
       busy.current.delete(take.id);
     }
@@ -49,10 +70,10 @@ function useKept(initial: string[]) {
       <span key={message.n}>{message.text}</span>
     </p>
   );
-  return { kept, toggle, status, message: message.text };
+  return { kept, hidden, choose, status, message: message.text };
 }
 
-function KeepButton({ take, on, onPress }: { take: DivinationTake; on: boolean; onPress: () => void }) {
+function KeepButton({ on, onPress }: { on: boolean; onPress: () => void }) {
   return (
     <Button variant="text" aria-pressed={on} onClick={onPress} className="min-h-6 shrink-0 inline-flex items-center gap-1">
       <span aria-hidden="true">{on ? "♥" : "♡"}</span>
@@ -61,28 +82,81 @@ function KeepButton({ take, on, onPress }: { take: DivinationTake; on: boolean; 
   );
 }
 
-/** The line under the home page title: one take, its kind, and buttons for another take and for keeping it. The person's own takes come round too. */
-export function HomeTake({ seed, kept: initial, own }: { seed: number; kept: string[]; own: OwnTake[] }) {
-  const [order] = useState(() => homeOrder(seed, TAKES.length, own.length));
-  const [at, setAt] = useState(0);
-  const { kept, toggle, status } = useKept(initial);
-  const slot = order[at];
-  const take = slot.own ? null : TAKES[slot.i];
-  const text = slot.own ? own[slot.i].text : TAKES[slot.i].text;
+function HideButton({ hidden, onPress }: { hidden: boolean; onPress: () => void }) {
+  return (
+    <Button variant="text" onClick={onPress} className="min-h-6 shrink-0">
+      {hidden ? "Show again" : "Hide"}
+    </Button>
+  );
+}
+
+/**
+ * The line under the home page title: one take, its kind, and buttons for another take, for keeping it and for hiding it.
+ * The person's own takes come round too. Hidden takes are left out of the order; one hidden here moves on to the next, with
+ * Undo next to it until the next press.
+ */
+export function HomeTake({ seed, kept: initialKept, hidden: initialHidden, own }: { seed: number; kept: string[]; hidden: string[]; own: OwnTake[] }) {
+  const [stock] = useState(() => visibleTakes(initialHidden));
+  const [order] = useState(() => homeOrder(seed, stock.length, own.length));
+  const [at, setAt] = useState(order.length > 0 ? 0 : -1);
+  const [undo, setUndo] = useState<{ take: DivinationTake; at: number } | null>(null);
+  const { kept, hidden, choose, status } = useTakeChoices(initialKept, initialHidden);
+  const isHidden = (s: TakeSlot, also?: string) => !s.own && (hidden.has(stock[s.i].id) || stock[s.i].id === also);
+
+  async function hide(take: DivinationTake) {
+    const from = at;
+    setUndo({ take, at: from });
+    setAt(nextVisibleIndex(order, from, (s) => isHidden(s, take.id)));
+    if (!(await choose(take, "hide", true))) {
+      setAt(from);
+      setUndo(null);
+    }
+  }
+
+  async function undoHide() {
+    if (!undo) return;
+    const { take, at: back } = undo;
+    if (await choose(take, "hide", false)) {
+      setAt(back);
+      setUndo(null);
+    }
+  }
+
+  function another() {
+    setUndo(null);
+    setAt((i) => {
+      const n = nextVisibleIndex(order, i, (s) => isHidden(s));
+      return n === -1 ? i : n;
+    });
+  }
+
+  const slot = at >= 0 ? order[at] : null;
+  const take = slot && !slot.own ? stock[slot.i] : null;
+  const text = slot ? (slot.own ? own[slot.i].text : stock[slot.i].text) : "You have hidden every take.";
   return (
     <figure className="max-w-xl mx-auto space-y-1.5">
       <blockquote className="text-lg text-ink-soft leading-relaxed" aria-live="polite">
         <p>{text}</p>
       </blockquote>
       <figcaption className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-ink-faint">
-        <span>{take ? TONE_LABELS[take.tone] : OWN_TONE_LABEL}</span>
-        <span aria-hidden="true">·</span>
-        <Button variant="text" onClick={() => setAt((i) => nextTakeIndex(i, order.length))} className="min-h-6">
-          Another take
-        </Button>
-        {take && <KeepButton take={take} on={kept.has(take.id)} onPress={() => toggle(take)} />}
+        {slot && (
+          <>
+            <span>{take ? TONE_LABELS[take.tone] : OWN_TONE_LABEL}</span>
+            <span aria-hidden="true">·</span>
+            <Button variant="text" onClick={another} className="min-h-6">
+              Another take
+            </Button>
+          </>
+        )}
+        {take && <KeepButton on={kept.has(take.id)} onPress={() => { setUndo(null); choose(take, "keep", !kept.has(take.id)); }} />}
+        {take && <HideButton hidden={false} onPress={() => hide(take)} />}
+        {undo && (
+          <Button variant="text" onClick={undoHide} className="min-h-6">
+            Undo hide
+          </Button>
+        )}
         <Link href={`/archetypes/${DIVINATION_SLUG}`} className="text-accent-ink hover:text-accent-ink-hover underline max-sm:inline-flex max-sm:items-center max-sm:min-h-11">
-          {take ? "All takes" : "Your takes"}
+          {!slot ? "Show takes again" : take ? "All takes" : "Your takes"}
         </Link>
       </figcaption>
       {status}
@@ -172,20 +246,31 @@ function OwnTakes({ initial }: { initial: OwnTake[] }) {
   );
 }
 
-/** Every take, on the Divination archetype page: the person's own first, then the ones they kept, then the rest by kind. */
-export function TakesList({ kept: initial, own }: { kept: string[]; own: OwnTake[] }) {
-  const { kept, toggle, status } = useKept(initial);
-  // The kept list is the order they were kept in when the page opened; a take kept here joins it next time, so nothing moves under the pointer.
-  const [keptFirst] = useState(() => initial.map(takeById).filter((x): x is DivinationTake => !!x));
-  const row = (take: DivinationTake, showKind: boolean) => (
-    <li key={take.id} className="flex items-start justify-between gap-3 py-1.5 border-b border-line last:border-b-0">
-      <span className="text-sm text-ink-soft leading-relaxed">
-        {take.text}
-        {showKind && <span className="text-ink-ghost"> · {TONE_LABELS[take.tone]}</span>}
-      </span>
-      <KeepButton take={take} on={kept.has(take.id)} onPress={() => toggle(take)} />
-    </li>
-  );
+/**
+ * Every take, on the Divination archetype page: the person's own first, then the ones they kept, then the ones they hid,
+ * then the rest by kind. Each of the app's takes has Keep and Hide (or Show again).
+ */
+export function TakesList({ kept: initialKept, hidden: initialHidden, own }: { kept: string[]; hidden: string[]; own: OwnTake[] }) {
+  const { kept, hidden, choose, status } = useTakeChoices(initialKept, initialHidden);
+  // The kept and hidden lists are as they were when the page opened; a take kept or hidden here joins them next time, so nothing moves under the pointer.
+  const [keptFirst] = useState(() => initialKept.map(takeById).filter((x): x is DivinationTake => !!x));
+  const [hiddenFirst] = useState(() => initialHidden.map(takeById).filter((x): x is DivinationTake => !!x));
+  const row = (take: DivinationTake, showKind: boolean) => {
+    const isHidden = hidden.has(take.id);
+    return (
+      <li key={take.id} className="flex items-start justify-between gap-3 py-1.5 border-b border-line last:border-b-0">
+        <span className={`text-sm leading-relaxed ${isHidden ? "text-ink-faint" : "text-ink-soft"}`}>
+          {take.text}
+          {showKind && <span className="text-ink-ghost"> · {TONE_LABELS[take.tone]}</span>}
+          {isHidden && <span className="text-ink-ghost"> · Hidden</span>}
+        </span>
+        <span className="flex shrink-0 items-center gap-2">
+          <KeepButton on={kept.has(take.id)} onPress={() => choose(take, "keep", !kept.has(take.id))} />
+          <HideButton hidden={isHidden} onPress={() => choose(take, "hide", !isHidden)} />
+        </span>
+      </li>
+    );
+  };
   return (
     <div className="space-y-4">
       <OwnTakes initial={own} />
@@ -195,6 +280,14 @@ export function TakesList({ kept: initial, own }: { kept: string[]; own: OwnTake
           <ul className="list-none p-0">{keptFirst.map((t) => row(t, true))}</ul>
         ) : (
           <p className="text-sm text-ink-faint">None kept yet. Press Keep on a take you like, here or on the home page.</p>
+        )}
+      </div>
+      <div className="space-y-1">
+        <h3 className="text-xs text-ink-faint">Your hidden takes ({hidden.size})</h3>
+        {hiddenFirst.length > 0 ? (
+          <ul className="list-none p-0">{hiddenFirst.map((t) => row(t, true))}</ul>
+        ) : (
+          <p className="text-sm text-ink-faint">None hidden. Press Hide on a take you do not want to see again, here or on the home page.</p>
         )}
       </div>
       <details className="space-y-2">
