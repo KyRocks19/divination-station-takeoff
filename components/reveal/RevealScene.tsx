@@ -1,5 +1,6 @@
 import { PORCELAIN, getTea, type TeaKind } from "@/lib/tea-core";
 import type { RevealScene as Scene } from "@/lib/reveal-core";
+import ShuffleDeck from "@/components/ShuffleDeck";
 
 /**
  * The moving picture while a reading opens (components/reveal/Reveal.tsx). Drawn in the text colour except the tea, which is the colour of
@@ -8,6 +9,8 @@ import type { RevealScene as Scene } from "@/lib/reveal-core";
  */
 export default function RevealScene({ scene, tea = null, still = false, className = "" }: { scene: Scene; tea?: TeaKind | null; still?: boolean; className?: string }) {
   const move = (c: string) => (still ? "" : c);
+  // Cards (tarot, oracle, playing cards) shuffle as the five sigil card backs of the draw (owner's request, 2026-11-01).
+  if (scene === "shuffle") return <ShuffleDeck still={still} className={still ? className : `${className} min-h-[260px]`} />;
   return (
     <svg viewBox="0 0 200 200" aria-hidden="true" className={`text-tone-300 ${className}`}>
       {scene === "brew" && <Brew tea={tea ?? "china-black"} move={move} />}
@@ -18,17 +21,6 @@ export default function RevealScene({ scene, tea = null, still = false, classNam
           <circle cx="100" cy="100" r="34" fill="currentColor" fillOpacity="0.85" className={`rv-origin ${move("rv-spread")}`} />
           <circle cx="78" cy="78" r="9" fill="currentColor" fillOpacity="0.8" className={`rv-origin ${move("rv-spread rv-late")}`} />
           <circle cx="122" cy="78" r="9" fill="currentColor" fillOpacity="0.8" className={`rv-origin ${move("rv-spread rv-late")}`} />
-        </g>
-      )}
-      {scene === "shuffle" && (
-        <g>
-          {[0, 1, 2].map((i) => (
-            <g key={i} className={move(`rv-shuffle rv-shuffle-${i}`)}>
-              <rect x="70" y="45" width="60" height="100" rx="6" className="fill-surface" stroke="currentColor" strokeWidth="2" />
-              <rect x="77" y="52" width="46" height="86" rx="4" fill="none" stroke="currentColor" strokeOpacity="0.4" />
-              <path d="M100 82l4 9 10 1-8 6 3 10-9-6-9 6 3-10-8-6 10-1z" fill="currentColor" fillOpacity="0.6" />
-            </g>
-          ))}
         </g>
       )}
       {scene === "bag" && (
