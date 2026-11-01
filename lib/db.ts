@@ -1,7 +1,7 @@
 import { Pool, PoolClient } from "pg";
 import { connectionStringFor, sslFor } from "./db-ssl";
 import { READ_RETRY_DELAYS_MS, isConnectionError, poolMax } from "./db-retry-core";
-import { localDbDir } from "./local-db-core";
+import { errorText, localDbDir } from "./local-db-core";
 import { makeLocalPool, type LocalPool } from "./local-db";
 
 // One pool for the whole server process. It is kept on globalThis so that the dev server, which loads this
@@ -65,7 +65,7 @@ async function acquire(): Promise<PoolClient> {
     } catch (err) {
       // A locked local copy (lib/seal.ts) stays locked however often it is asked.
       if (attempt >= ACQUIRE_RETRY_DELAYS_MS.length || (err as { code?: string })?.code === "DS_LOCKED") throw err;
-      const reason = err instanceof Error ? err.message : String(err);
+      const reason = errorText(err);
       console.warn(`[db] could not get a connection (${reason}); trying again`);
       await new Promise((resolve) => setTimeout(resolve, ACQUIRE_RETRY_DELAYS_MS[attempt]));
     }
@@ -120,7 +120,7 @@ export async function queryRead<T = any>(sql: string, params?: any[]): Promise<T
       return await query<T>(sql, params);
     } catch (err) {
       if (attempt >= READ_RETRY_DELAYS_MS.length || !isConnectionError(err)) throw err;
-      console.warn(`[db] a read lost its connection (${err instanceof Error ? err.message : err}); trying again`);
+      console.warn(`[db] a read lost its connection (${errorText(err)}); trying again`);
       await new Promise((resolve) => setTimeout(resolve, READ_RETRY_DELAYS_MS[attempt]));
     }
   }
