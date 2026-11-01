@@ -1,0 +1,44 @@
+# The 24 runes of the Elder Futhark, matched to the shared archetypes (lib/archetypes-data.ts).
+# DRAFT written 2026-10-15 by Claude for the user to review. Nothing reads this file yet: it is not in the database.
+# Format and the meaning of each basis: lib/symbol-archetype-map.ts. Order matters: the first link is the primary one.
+#
+# How to read a link:  slug:aspect=basis.  "poem" means one of the three old rune poems (Old English, Norwegian, Icelandic)
+# says something on that theme, judged from the one-line summaries already in lib/runes-data.ts (paraphrased for this app,
+# not quoted). The Old English poem covers 29 runes of the Anglo-Saxon row, so it can speak to Elder Futhark runes the
+# Norwegian and Icelandic poems (16 runes each) do not. "name" is the reconstructed meaning of the rune's name.
+# "modern" is divination practice (Blum 1982 and later); the old poems give no divination meanings and no reversed ones.
+#
+# Every link that was in lib/common-meanings-data.ts is kept; a few new links come from what a poem says (see git history
+# for which). Nothing was removed. The poems describe what a rune stands for; the app's
+# light and shadow wording is the app's. Where the poems disagree with each other, the note says so.
+#
+# Bases and the sources behind them. There is no source card yet for Blum 1982; the user may want one (see the audit).
+@basis poem = osborn-longland-1982
+@basis name = page-1987
+@basis myth =
+@basis modern =
+
+rune-fehu | wealth-prosperity=poem, generosity-giving=poem, anger-conflict:shadow=poem, work-craft=modern | OE: wealth comforts everyone but should be shared. Norwegian and Icelandic: wealth causes quarrels among kin. Work and craft is modern only.
+rune-uruz | courage-strength=poem, energy-vitality=name, healing-health=modern | OE: the aurochs is fierce and fights with its horns. The Norwegian and Icelandic verses (slag, drizzle) do not support the theme; it rests on the OE verse and the name (aurochs, debated). Healing is modern.
+rune-thurisaz | protection-boundaries=poem, struggle-resilience=modern, anger-conflict=modern, harm-abuse:shadow=poem | OE: the thorn is sharp and painful to grasp (a guard that hurts). Norwegian and Icelandic: the giant brings sickness and torment to women (the app records what the poems say; it does not endorse it). The name is read as thorn or giant; scholars differ.
+rune-ansuz | communication-expression=poem, learning-wisdom=poem, messages-news=modern, intuition-inner-knowing=modern, spirituality-faith=name | OE: the source of speech and a support of wisdom (the word can mean god or mouth; scholars disagree). Icelandic: an old god. The link to spirituality comes from the name. Messages and intuition are modern.
+rune-raidho | travel-journeys=poem, struggle-resilience=poem, progress-momentum=modern, patience-waiting=modern | OE and Icelandic: riding is easy for those indoors and toil for horse and rider on the long road. Norwegian: the worst thing for horses.
+rune-kenaz | energy-vitality=poem, creativity-talent=modern, learning-wisdom=modern, healing-health:shadow=poem | OE: the torch burns with a bright flame. Norwegian and Icelandic: the name there is a sore or ulcer (the poems and the name disagree here, and the modern torch comes from the OE reading).
+rune-gebo | generosity-giving=poem, partnership-marriage=modern, balance-moderation=modern | OE only (Gebo is not in the Younger Futhark): giving brings honour and helps those with nothing. Partnership is modern, from the idea of exchange in both directions.
+rune-wunjo | joy-contentment=poem, peace-harmony=modern, community-belonging=modern | OE only: joy belongs to someone with few troubles, comfort and a good house.
+rune-hagalaz | change-transformation=poem, disaster-collapse=modern, struggle-resilience=modern | OE: hail falls and turns to water. Norwegian and Icelandic: cold grain, sleet. The theme of sudden harm is modern; the poems stress the cold and the melting.
+rune-nauthiz | struggle-resilience=poem, healing-health=poem, acceptance-surrender=modern, wealth-prosperity:shadow=app | OE: need is hard on the heart, yet heeded in time it turns to help and healing. Icelandic: hardship and toilsome work. Wealth (as lack of it) is this app's own link and has no source.
+rune-isa | patience-waiting=name, rest-selfcare=modern, solitude-reflection=modern, progress-momentum:shadow=app | The name is ice: a standstill. OE: ice is cold and slippery; Norwegian: a bridge the blind must be led over. The link to rest and reflection is modern; progress as the hard side (a stop) is the app's own.
+rune-jera | nature-earth=poem, hope-optimism=poem, work-craft=name, patience-waiting=modern, success-recognition=modern | OE: the year is a hope to people when the earth gives its fruits to rich and poor alike. All three poems: a boon, a good harvest. The name is year or harvest.
+rune-eihwaz | struggle-resilience=poem, protection-boundaries=poem, endings-release=modern, death-mortality=modern, spirituality-faith=modern | OE: the yew is hard and firm in the earth, a guardian of fire. Yew and death is modern here (the old poems do not say it); the Norwegian and Icelandic poems have no verse for this rune.
+rune-perthro | play-humour=poem, fate-luck-karma=poem, mystery-secrets=modern, compulsion-addiction:shadow=app | OE: unclear; translators read a game piece or dice cup, a source of play and laughter, so chance follows only if that reading is right. The name is unknown. Mystery and compulsion are modern or the app's own.
+rune-algiz | protection-boundaries=poem, spirituality-faith=modern, intuition-inner-knowing=modern | OE: elk-sedge wounds anyone who grasps at it (a plant that defends itself). The name is uncertain. The Norwegian and Icelandic verses are for the later rune yr, not this one.
+rune-sowilo | hope-optimism=poem, support-guidance=poem, success-recognition=modern, energy-vitality=modern | OE: the sun is a hope to sailors until they reach land. Norwegian: the sun lights the world. Icelandic: a shining ray.
+rune-tiwaz | loyalty-trust-betrayal=poem, acceptance-surrender=myth, justice-law=modern, courage-strength=modern, truth-honesty-integrity=modern | OE: a guiding sign that keeps faith with nobles. The Norwegian and Icelandic poems say Tyr has one hand; the sacrifice reading comes from the story of Tyr and the wolf Fenrir, told in the Prose Edda, not in the poems. Justice and honesty are modern.
+rune-berkano | growth-maturity=poem, fertility-birth=modern, parenthood-caregiving=modern, family-home=modern | OE: the birch bears no fruit but sends up shoots. Norwegian: the greenest shrub. Icelandic: a leafy twig, a young tree. Birth and home are modern.
+rune-ehwaz | travel-journeys=poem, progress-momentum=name, partnership-marriage=modern, loyalty-trust-betrayal=modern | OE only: the horse is a joy to nobles, proud on its hooves, a comfort to the restless. Partnership and trust are modern (horse and rider).
+rune-mannaz | community-belonging=poem, identity-individuality=name, death-mortality=poem, loyalty-trust-betrayal:shadow=poem, growth-maturity=modern | OE: a person is dear to kin, yet each will fail the other, and the body goes to the earth. Norwegian: a person is the increase of the dust.
+rune-laguz | fear-anxiety=poem, nature-earth=poem, intuition-inner-knowing=modern, emotional-expression=modern, dreams-vision=modern | OE: water seems endless to people on an unsteady ship, and the waves frighten them. Norwegian and Icelandic: a waterfall, a geyser, a land full of fish. Intuition and feeling are modern.
+rune-ingwaz | travel-journeys=poem, fertility-birth=myth, endings-release=modern, rest-selfcare=modern, new-beginnings=modern | OE only: Ing was first seen among the East Danes, then went east over the sea. Ing as a fertility god is argued from the wider tradition, not from this verse, and scholars differ.
+rune-dagaz | hope-optimism=poem, messages-news=poem, intellect-clarity=poem, change-transformation=modern, new-beginnings=modern | OE only: day is a messenger, dear to people, a bright light and a hope and a help to all.
+rune-othala | family-home=poem, tradition-convention=poem, security-stability=poem, past-memory=modern, community-belonging=modern | OE only: an estate is dear to everyone who can enjoy there, in peace and plenty, what is right and proper.

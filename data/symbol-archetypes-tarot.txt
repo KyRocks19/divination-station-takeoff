@@ -1,0 +1,111 @@
+# The 78 tarot cards, matched to the shared archetypes (lib/archetypes-data.ts), one to three archetypes a card.
+# DRAFT written 2026-10-15 by Claude for the user to review. Nothing reads this file yet: it is not in the database.
+# Format and the meaning of each basis: lib/symbol-archetype-map.ts. Order matters: the first link is the card's primary archetype.
+#
+# How it was made. A card's archetype used to be only a pile of encyclopedia concepts (2,603 links, no single answer per card).
+# Here each card gets a short hand-written list, chosen from the card's Pixie-Smith keywords and text (lib/cards.ts), its number
+# (numerology), its suit, and, as a check, where the card's encyclopedia concepts sit (docs/tarot-archetype-draft-review.md sets
+# the two side by side). Each link names what it was drawn from:
+#   smith-waite  the card's Pixie-Smith keywords or text say it (upright or reversed)
+#   numerology   the number of the card (Aces begin, Fives test, Tens complete ...)
+#   suit         the suit's usual association (Cups feeling, Pentacles the material world, Swords thought, Wands energy)
+#   encyclopedia most of the card's concepts sit under it, though the keywords do not say it outright
+#   name         the card's own name
+# A link says the card REACHES the archetype, upright or reversed; it does not say which side. Every link is neutral for that reason.
+#
+# Honest limits. The Pixie-Smith keywords in lib/cards.ts follow modern reading practice more than A. E. Waite's 1910 book, and
+# authors differ. Tarot numerology and the suit correspondences are modern practice too. There is no source card yet for Waite's
+# Pictorial Key (the user may want one); until there is, the bases below have no sources listed.
+@basis smith-waite =
+@basis numerology =
+@basis suit =
+@basis encyclopedia =
+@basis name =
+
+# ---------------------------------------------------------------- Major Arcana
+major-0 | new-beginnings=smith-waite, youth-innocence=smith-waite, independence-freedom=smith-waite | A fresh start taken with an open heart: new beginnings, innocence, a free spirit. Reversed it warns of naivety and recklessness.
+major-1 | creativity-talent=smith-waite, magic-mysticism=name, will-discipline=smith-waite | Resourcefulness and inspired action: talent put to work by focused will. Reversed, talent wasted or turned crooked. The card is named for the magician.
+major-2 | intuition-inner-knowing=smith-waite, mystery-secrets=smith-waite, spirituality-faith=smith-waite | Intuition, sacred knowledge and what is kept hidden. Reversed, secrets kept too long or a disconnection from the inner voice.
+major-3 | nature-earth=smith-waite, parenthood-caregiving=smith-waite, beauty-charm=smith-waite | Nature, nurturing and beauty: the fertile earth made conscious. Reversed, a creative block or smothering what you love.
+major-4 | power-authority=smith-waite, order-structure=smith-waite, security-stability=smith-waite | Authority that builds structure and stability. Reversed, power without wisdom: control that has become domination or rigidity.
+major-5 | tradition-convention=smith-waite, spirituality-faith=smith-waite, learning-wisdom=smith-waite | Tradition, shared belief and mentorship. Reversed, questioning what you inherited and finding your own way.
+major-6 | love-romance=smith-waite, decisions-choices=smith-waite, partnership-marriage=smith-waite | Love and relationship, and a choice that asks you to know your values. Reversed, disharmony or values pulling apart.
+major-7 | will-discipline=smith-waite, success-recognition=smith-waite, progress-momentum=smith-waite | Willpower steering opposing forces toward a goal. Reversed, scattered energy and a loss of direction.
+major-8 | courage-strength=smith-waite, kindness-compassion=smith-waite, patience-waiting=smith-waite | Strength that is gentle: courage, compassion and patience where force would fail. Reversed, self-doubt and raw emotion.
+major-9 | solitude-reflection=smith-waite, intuition-inner-knowing=smith-waite | Soul-searching and inner guidance found in solitude. Reversed, solitude that has turned to isolation.
+major-10 | fate-luck-karma=smith-waite, change-transformation=smith-waite | Luck, karma, cycles and a turning point. Reversed, resisting change or breaking a cycle.
+major-11 | justice-law=smith-waite, truth-honesty-integrity=smith-waite, fate-luck-karma=smith-waite | Fairness, truth and cause and effect. Reversed, unfairness and a refusal to be accountable.
+major-12 | acceptance-surrender=smith-waite, patience-waiting=smith-waite, endings-release=smith-waite | Willing surrender, a pause and letting go, which bring a new perspective. Reversed, resisting the pause and stalling.
+major-13 | change-transformation=smith-waite, endings-release=smith-waite, death-mortality=name | Endings and transformation, the clearing that makes room for the new. Reversed, clinging to what is over. The card is named Death, though it is rarely read as a literal death.
+major-14 | balance-moderation=smith-waite, patience-waiting=smith-waite, peace-harmony=encyclopedia | Balance, moderation and patient blending of opposites. Reversed, excess and a call to realign. Peace and harmony is where most of its encyclopedia concepts sit.
+major-15 | compulsion-addiction=smith-waite, sensuality-sexuality=smith-waite, independence-freedom=smith-waite | Attachment, addiction, restriction and sexuality: the chains we do not see. Reversed, the first step to freedom.
+major-16 | disaster-collapse=smith-waite, change-transformation=smith-waite | Sudden upheaval: what was built on something false falls, and the collapse is a revelation. Reversed, a disaster averted or an inner collapse worked through.
+major-17 | hope-optimism=smith-waite, healing-health=smith-waite, spirituality-faith=smith-waite | Hope, renewal and faith restored after hardship. Reversed, faith that has dimmed.
+major-18 | illusion-denial=smith-waite, fear-anxiety=smith-waite, intuition-inner-knowing=smith-waite | Illusion, fear and the unconscious, where intuition and confusion mix. Reversed, the fog beginning to lift.
+major-19 | joy-contentment=smith-waite, energy-vitality=smith-waite, success-recognition=smith-waite | Warmth, joy, vitality and success. Reversed, optimism that has dimmed or reached too far.
+major-20 | forgiveness-reconciliation=smith-waite, change-transformation=smith-waite, justice-law=name | Absolution, rebirth and an inner calling. Reversed, the inner critic drowning the calling. Named for judgement, which is why justice and law are there.
+major-21 | success-recognition=smith-waite, endings-release=smith-waite, travel-journeys=smith-waite | Completion, accomplishment and travel. Reversed, loose ends and shortcuts.
+
+# ---------------------------------------------------------------- Cups (feeling)
+cups-ace | love-romance=smith-waite, new-beginnings=numerology, kindness-compassion=smith-waite | A new beginning in the heart: love, compassion and creativity. Reversed, feelings held in or turned inward.
+cups-2 | partnership-marriage=smith-waite, love-romance=smith-waite | Mutual attraction and partnership. Reversed, break-ups and disharmony.
+cups-3 | community-belonging=smith-waite, joy-contentment=smith-waite, creativity-talent=smith-waite | Celebration, friendship and creativity among your people. Reversed, too much of a good thing or a wish for time alone.
+cups-4 | solitude-reflection=smith-waite, grief-sorrow=encyclopedia | Contemplation and apathy, turned inward and perhaps overlooking what is offered. Reversed, re-engaging.
+cups-5 | grief-sorrow=smith-waite, guilt-shame-regret=smith-waite, forgiveness-reconciliation=smith-waite | Regret and disappointment over what was lost, with two cups still standing. Reversed, self-forgiveness and moving on.
+cups-6 | past-memory=smith-waite, youth-innocence=smith-waite, joy-contentment=smith-waite | Revisiting the past: childhood memories, innocence and joy. Reversed, living in the past.
+cups-7 | decisions-choices=smith-waite, illusion-denial=smith-waite, dreams-vision=encyclopedia | Many choices, some of them wishful thinking. Reversed, the fog of choices lifting.
+cups-8 | endings-release=smith-waite, grief-sorrow=smith-waite, solitude-reflection=encyclopedia | Walking away from what no longer satisfies, out of disappointment. Reversed, indecision at the threshold.
+cups-9 | joy-contentment=smith-waite, success-recognition=encyclopedia | Contentment and the wish come true. Reversed, looking inward for happiness rather than at what you own.
+cups-10 | joy-contentment=smith-waite, family-home=encyclopedia, peace-harmony=smith-waite | Harmony, blissful relationships and an emotional home. Reversed, disconnection beneath a whole-looking family.
+cups-page | creativity-talent=smith-waite, dreams-vision=smith-waite, youth-innocence=encyclopedia | Creative opportunities and a daydreaming curiosity. Reversed, doubting intuition and creative blocks.
+cups-knight | love-romance=smith-waite, creativity-talent=smith-waite, beauty-charm=smith-waite | Romance, imagination, charm and beauty. Reversed, an overactive imagination and jealousy.
+cups-queen | kindness-compassion=smith-waite, intuition-inner-knowing=smith-waite, emotional-expression=encyclopedia | Compassionate, caring and intuitive, steady in her feelings. Reversed, care turned inward.
+cups-king | kindness-compassion=smith-waite, balance-moderation=smith-waite, diplomacy-compromise=smith-waite | Emotionally balanced, compassionate and diplomatic. Reversed, moodiness or feelings locked down.
+
+# ---------------------------------------------------------------- Pentacles (the material world)
+pentacles-ace | wealth-prosperity=smith-waite, new-beginnings=numerology, work-craft=smith-waite | A new financial or career opportunity. Reversed, a missed opening and a scarcity mindset.
+pentacles-2 | balance-moderation=smith-waite, flexibility-openness=smith-waite, wealth-prosperity=suit | Juggling priorities with adaptability. Reversed, overcommitted and losing the rhythm.
+pentacles-3 | work-craft=smith-waite, learning-wisdom=smith-waite, community-belonging=smith-waite | Teamwork, learning and craft in a shared creation. Reversed, collaboration broken down.
+pentacles-4 | security-stability=smith-waite, wealth-prosperity=smith-waite | Saving and holding tight for security, and the fear underneath. Reversed, the grip loosening or spending out of control.
+pentacles-5 | wealth-prosperity=smith-waite, struggle-resilience=encyclopedia, community-belonging=encyclopedia | Financial loss and the isolation of feeling left out in the cold. Reversed, the first signs of recovery.
+pentacles-6 | generosity-giving=smith-waite, wealth-prosperity=smith-waite | Giving and receiving, wealth moving both ways. Reversed, one-sided charity and unpaid debts.
+pentacles-7 | patience-waiting=smith-waite, will-discipline=smith-waite, nature-earth=encyclopedia | Perseverance and a long view while what you planted grows. Reversed, effort that is not bearing fruit.
+pentacles-8 | work-craft=smith-waite, learning-wisdom=smith-waite, will-discipline=smith-waite | Apprenticeship and mastery, one repetition at a time. Reversed, perfectionism or effort pointed the wrong way.
+pentacles-9 | wealth-prosperity=smith-waite, independence-freedom=smith-waite, beauty-charm=encyclopedia | Abundance and self-sufficiency, with a touch of luxury. Reversed, success without inner fulfilment.
+pentacles-10 | family-home=smith-waite, wealth-prosperity=smith-waite, tradition-convention=smith-waite | Wealth, family and legacy passed down. Reversed, dysfunction or a legacy that is not yours to claim.
+pentacles-page | learning-wisdom=smith-waite, goals-planning=smith-waite, wealth-prosperity=suit | Careful study of a practical possibility. Reversed, procrastination dressed as preparation.
+pentacles-knight | will-discipline=smith-waite, work-craft=smith-waite, duty-responsibility=smith-waite | Hard work, routine and reliability. Reversed, rigid perfectionism or feeling stuck.
+pentacles-queen | parenthood-caregiving=smith-waite, wealth-prosperity=smith-waite, security-stability=encyclopedia | Nurturing and providing, practical care. Reversed, smothering or neglecting your own needs.
+pentacles-king | business-enterprise=smith-waite, wealth-prosperity=smith-waite, power-authority=smith-waite | Business, wealth and steady leadership. Reversed, obsession with wealth and status.
+
+# ---------------------------------------------------------------- Swords (thought and conflict)
+swords-ace | intellect-clarity=smith-waite, new-beginnings=numerology, truth-honesty-integrity=smith-waite | A breakthrough in thought: clarity and a truth too sharp to ignore. Reversed, confusion or resisting a truth already visible.
+swords-2 | decisions-choices=smith-waite, illusion-denial=smith-waite | A difficult decision avoided, blindfolded at an impasse. Reversed, the deadlock breaking.
+swords-3 | grief-sorrow=smith-waite, separation-breakup=smith-waite, healing-health=smith-waite | Heartbreak and sorrow, named plainly. Reversed, the slow work of healing and forgiving.
+swords-4 | rest-selfcare=smith-waite, solitude-reflection=smith-waite, healing-health=smith-waite | Rest, meditation and recovery after strain. Reversed, restlessness or burn-out.
+swords-5 | anger-conflict=smith-waite, harm-abuse=encyclopedia, forgiveness-reconciliation=smith-waite | Conflict and winning at a cost. Reversed, making amends and reconciliation.
+swords-6 | change-transformation=smith-waite, travel-journeys=smith-waite, endings-release=smith-waite | A passage toward calmer waters, releasing baggage. Reversed, unfinished business pulling you back.
+swords-7 | loyalty-trust-betrayal=smith-waite, truth-honesty-integrity=smith-waite, risk-daring=encyclopedia | Deception and acting strategically, outside the rules. Reversed, conscience and a return to honesty.
+swords-8 | independence-freedom=smith-waite, fear-anxiety=encyclopedia, confidence-self-worth=smith-waite | Feeling imprisoned by self-imposed limits. Reversed, self-limiting beliefs loosening and the blindfold coming off.
+swords-9 | fear-anxiety=smith-waite, mental-health=smith-waite, guilt-shame-regret=encyclopedia | Anxiety, worry and nightmares. Reversed, facing the fears and shame that speak loudest at night.
+swords-10 | endings-release=smith-waite, loyalty-trust-betrayal=smith-waite, disaster-collapse=encyclopedia | A painful ending, betrayal and crisis, with the dawn behind it. Reversed, recovery after rock bottom.
+swords-page | communication-expression=smith-waite, learning-wisdom=smith-waite, intellect-clarity=suit | Curiosity, new ideas and new ways of communicating. Reversed, all talk or careless words.
+swords-knight | progress-momentum=smith-waite, goals-planning=smith-waite, courage-strength=encyclopedia | Ambitious, action-oriented and fast-thinking. Reversed, restless and impulsive.
+swords-queen | intellect-clarity=smith-waite, protection-boundaries=smith-waite, communication-expression=smith-waite | Unbiased judgement, clear boundaries and direct speech. Reversed, cold or easily influenced.
+swords-king | intellect-clarity=smith-waite, power-authority=smith-waite, truth-honesty-integrity=smith-waite | Mental clarity, authority and truth. Reversed, intellect used to manipulate.
+
+# ---------------------------------------------------------------- Wands (energy and drive)
+wands-ace | new-beginnings=smith-waite, creativity-talent=smith-waite, energy-vitality=suit | The first spark of inspiration and new opportunity. Reversed, a spark that has not caught.
+wands-2 | goals-planning=smith-waite, decisions-choices=smith-waite, travel-journeys=encyclopedia | Planning ahead from the edge of the wider world. Reversed, fear of the unknown or of personal power.
+wands-3 | progress-momentum=smith-waite, travel-journeys=smith-waite, business-enterprise=encyclopedia | Expansion and foresight, looking out as what you set moving moves. Reversed, delays.
+wands-4 | community-belonging=smith-waite, joy-contentment=smith-waite, family-home=smith-waite | Celebration and homecoming, belonging after achievement. Reversed, tension in what should feel settled.
+wands-5 | anger-conflict=smith-waite, peace-harmony=smith-waite | Competition, disagreement and creative tension. Reversed, a resolution or conflict turned inward.
+wands-6 | success-recognition=smith-waite, community-belonging=encyclopedia, confidence-self-worth=smith-waite | Public recognition and self-confidence, the victory parade. Reversed, private achievement or ego in the way.
+wands-7 | protection-boundaries=smith-waite, struggle-resilience=smith-waite, courage-strength=encyclopedia | Holding your ground against challenge and competition. Reversed, wavering and exhaustion.
+wands-8 | progress-momentum=smith-waite, travel-journeys=smith-waite, messages-news=smith-waite | Swift movement, travel and communication all aligned. Reversed, delay and haste creating problems.
+wands-9 | struggle-resilience=smith-waite, courage-strength=smith-waite, protection-boundaries=smith-waite | Weary but unbroken: resilience, persistence and boundaries. Reversed, guardedness and reluctance to ask for support.
+wands-10 | duty-responsibility=smith-waite, stress-overwhelm=encyclopedia, work-craft=smith-waite | A burden of extra responsibility and hard work. Reversed, setting some burdens down.
+wands-page | messages-news=smith-waite, creativity-talent=smith-waite, independence-freedom=smith-waite | Bright ideas, discovery and a free spirit carrying a message. Reversed, spark with no follow-through.
+wands-knight | energy-vitality=smith-waite, risk-daring=smith-waite, courage-strength=encyclopedia | Passion, adventure and impulsiveness. Reversed, scattered energy and haste.
+wands-queen | confidence-self-worth=smith-waite, courage-strength=smith-waite, independence-freedom=smith-waite | Confidence, courage and independence. Reversed, creative insecurity or jealousy.
+wands-king | power-authority=smith-waite, goals-planning=smith-waite, business-enterprise=smith-waite | A natural leader with vision, the entrepreneur. Reversed, overbearing or impulsive.

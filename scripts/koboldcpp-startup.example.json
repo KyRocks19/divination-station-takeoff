@@ -1,0 +1,27 @@
+{
+  "koboldcppExe": "C:\\Users\\YOU\\Desktop\\koboldcpp-nocuda.exe",
+  "envFile": "C:\\path\\to\\divination-station\\.env.local",
+  "startupTimeoutSeconds": 600,
+  "logDir": "",
+
+  "image": {
+    "enabled": true,
+    "config": "C:\\Users\\YOU\\Desktop\\dreamshaper8.kcpps",
+    "model": "C:\\Users\\YOU\\Documents\\ImageModels\\StableDiffusion\\dreamshaper_8.safetensors",
+    "upscaler": ""
+  },
+
+  "text": {
+    "enabled": true,
+    "config": "C:\\Users\\YOU\\Documents\\TextModels\\kcppses\\Gemma4-v2-Q4plain.kcpps",
+    "adminDir": "C:\\Users\\YOU\\Documents\\TextModels\\kcppses",
+    "adminPassword": "",
+    "minFreeVramMB": 8500
+  },
+
+  "studio": {
+    "enabled": false,
+    "appFolder": "C:\\path\\to\\divination-station",
+    "envFile": ""
+  }
+}

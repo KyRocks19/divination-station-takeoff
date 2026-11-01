@@ -1,0 +1,8 @@
+# The three scrying surfaces, matched to the shared archetypes (lib/archetypes-data.ts).
+# Written 2026-10-17 from the mapping the app already had in code (lib/common-meanings-data.ts), so nothing is new or removed.
+# Basis "app" on every link: scrying has no standard system of symbols. These links say what a surface has been used for and
+# what it tends to invite; what a person sees in it is theirs to read.
+
+scrying-mirror | solitude-reflection=app, mystery-secrets=app, intuition-inner-knowing=app, dreams-vision=app | Carried over from the app's own reading (2026-10-17). Scrying has no standard key.
+scrying-ball | focus-concentration=app, dreams-vision=app, magic-mysticism=app, intuition-inner-knowing=app | Carried over from the app's own reading (2026-10-17). Scrying has no standard key.
+scrying-water | emotional-expression=app, intuition-inner-knowing=app, peace-harmony=app, nature-earth=app | Carried over from the app's own reading (2026-10-17). Scrying has no standard key.

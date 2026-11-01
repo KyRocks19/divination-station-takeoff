@@ -1,0 +1,45 @@
+# The 25 ogham letters, matched to the shared archetypes (lib/archetypes-data.ts).
+# DRAFT written 2026-10-15 by Claude for the user to review. Nothing reads this file yet: it is not in the database.
+# Format and the meaning of each basis: lib/symbol-archetype-map.ts. Order matters: the first link is the primary one.
+#
+# The honest picture (see OGHAM_SOURCES in lib/ogham-data.ts): no old source gives a divination meaning for any ogham
+# letter. The letter names, and the tree glosses that medieval scholars added later, are the oldest evidence, and only
+# about five to eight of the names are clearly trees. So a link can rest on a name ("name"), on a medieval commentary
+# ("gloss"), on a story ("myth"), on attested plant lore ("folk"), or on modern divination practice ("modern": mostly
+# after Robert Graves, 1948, whose "tree calendar" scholars reject). Most links here are modern, and say so. That is
+# information, not a defect.
+#
+# Every link that was in lib/common-meanings-data.ts is kept. A few new links come from a name or a story (see git history for which).
+# The forfeda (the five later letters) have no archetype on purpose: see their notes. They are listed so the file covers
+# every piece, and so a missing line is a mistake rather than a decision.
+@basis name = mcmanus-1991
+@basis gloss = mcmanus-1991
+@basis myth =
+@basis folk =
+@basis modern = laurie-2007, wp-white-goddess, hutton-1999
+
+ogham-beith | new-beginnings=modern, change-transformation=modern | Birch. Beginnings is modern; the letter being first in the alphabet is a feature of the order, not of the name.
+ogham-luis | protection-boundaries=folk, intuition-inner-knowing=modern | The name is a plant (later glossed rowan). Rowan as protection against harm is widely attested Irish and Scottish folklore. Insight is modern.
+ogham-fearn | protection-boundaries=modern, courage-strength=modern, support-guidance=modern | Alder (the name is old). All readings here are modern; no source ties alder to shelter or guidance.
+ogham-sail | flexibility-openness=modern, intuition-inner-knowing=modern, emotional-expression=modern | Willow. A willow bends, which is a property of the tree; reading that as adapting to change is modern.
+ogham-nion | decisions-choices=name, fate-luck-karma=modern, community-belonging=modern, spirituality-faith=modern | The name is read as fork or loft (later glossed ash). The link to choices comes from "fork", which is uncertain because the meaning of the name is disputed. The rest is modern.
+ogham-uath | fear-anxiety=name, patience-waiting=modern, protection-boundaries=modern, struggle-resilience=modern | The name means horror or fear (later glossed whitethorn); the first link comes from the name. The value of the letter is unclear. The rest is modern.
+ogham-dair | courage-strength=modern, security-stability=modern, power-authority=modern | Oak. A strong wood is a property of the tree; the divination reading is modern.
+ogham-tinne | work-craft=name, courage-strength=modern, justice-law=modern, balance-moderation=modern, anger-conflict=modern | The name is read as a metal ingot (later glossed holly); the first link comes from the name. The rest is modern.
+ogham-coll | learning-wisdom=myth, creativity-talent=modern, intuition-inner-knowing=modern | Hazel. Hazelnuts of wisdom are in Irish story (the well of wisdom and the salmon that eats the nuts), which is why wisdom is the primary link. Creativity and insight are modern.
+ogham-ceirt | love-romance=folk, decisions-choices=modern, beauty-charm=modern | The name is a bush or a rag (later glossed apple). Apples were used in love divination in Irish and Scottish folk custom (for example at Samhain), which is the basis of the primary link; the other two are modern.
+ogham-muin | love-romance=name, truth-honesty-integrity=modern, communication-expression=modern, joy-contentment=modern, compulsion-addiction=modern | The name is read as neck, ruse, or love (later glossed vine); the first link comes from one reading of the name, which is disputed. The rest is modern.
+ogham-gort | nature-earth=name, growth-maturity=modern, will-discipline=modern, flexibility-openness=modern | The name is a field (later glossed ivy); the first link comes from the name. The rest is modern.
+ogham-ngeadal | death-mortality:shadow=name, healing-health=modern, communication-expression=modern, endings-release=modern | The name is read as killing or wounding (later glossed broom, reed, or fern); the first link, on the hard side, comes from the name. Healing and the rest are modern.
+ogham-straif | fate-luck-karma=modern, struggle-resilience=modern, change-transformation=modern | The name is read as sulphur (later glossed blackthorn); the value is uncertain. All readings here are modern.
+ogham-ruis | endings-release=modern, death-mortality=modern, past-memory=modern, learning-wisdom=modern | The name is red (later glossed elder). All readings here are modern.
+ogham-ailm | intellect-clarity=modern, dreams-vision=modern, struggle-resilience=modern | The name is possibly pine or fir. All readings here are modern.
+ogham-onn | hope-optimism=modern, struggle-resilience=modern, community-belonging=modern | Later glossed gorse; the name itself is not clear. All readings here are modern.
+ogham-ur | nature-earth=name, family-home=modern, healing-health=modern, love-romance=modern | The name is earth, clay, or soil (later glossed heath); the first link comes from the name. The rest is modern.
+ogham-eadhadh | courage-strength=modern, fear-anxiety=modern, communication-expression=modern | The name is unknown (later glossed aspen). All readings here are modern.
+ogham-iodhadh | death-mortality=folk, endings-release=modern, past-memory=modern, spirituality-faith=modern | The name is unknown (later glossed yew). Yew in churchyards is long-attested folk and church custom, which is the basis of the primary link. The rest is modern.
+ogham-eabhadh | - | A later letter (forfid). Found on stones mostly in the formula KOI, and in the manuscripts; its value and name are uncertain. No common meaning has been written for it, and no tradition gives one. A person may link it to an archetype of their own.
+ogham-oir | - | A later letter (forfid). Value uncertain (oi), attested rarely. No common meaning has been written for it, and no tradition gives one.
+ogham-uilleann | - | A later letter (forfid). Value uncertain (ui), attested rarely. No common meaning has been written for it, and no tradition gives one.
+ogham-ifin | - | A later letter (forfid), also called Pin; it seems to have been made for the sound p, which the original alphabet lacked. No tradition gives it a divination meaning.
+ogham-eamhancholl | - | A later letter (forfid), the last of the five; not found on stones at all. No common meaning has been written for it, and no tradition gives one.

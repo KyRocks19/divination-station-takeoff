@@ -1,0 +1,42 @@
+# Oracle deck kit - progress
+
+**Goal:** A person makes their own oracle deck out of their own life, and using it sharpens their own intuition.
+
+> **Slimmed on 2026-10-22.** This file is read at the start of every session, so it holds only the present state (about 50 lines). Everything that used to be here is in `docs/archive/progress-history.md`, unchanged, under "Moved out of PROGRESS.md on 2026-10-22": the dated session paragraphs (2026-10-15 to 10-21, with their lessons), the old Working notes and the Parking lot. Search that file with Grep; never read it whole. Dated decisions: `DECISIONS.md` (Grep it). **Rule for the next writer: replace, do not append. Keep this file under 70 lines** (`handoff-writer`).
+
+## Handoff summary (rewritten 2026-10-22)
+
+**What this is.** Divination Station: Next.js 16 (App Router), React 19, Tailwind 4, Postgres (Neon hosted; PGlite in the local edition). The person is the author of every meaning; the app is a mirror that sharpens their own intuition. It began as tarot and is now divination tools from around the world plus a personal oracle deck kit. Dedicated to Hekate on the About page only. Nothing is launched; first users are the owner's housemates and circle.
+
+**Where the work is.** Open work, decisions, owner actions and checks: `docs/open-items.md` (read its index at the top; Grep an ID for the full row). The route to a public release and the order of work: `docs/release-plan.md`. Decisions: `DECISIONS.md`. Rules and the goal: `oracle-feature-design/SKILL.md`.
+
+**State at 2026-10-22, second cloud session** (branch `claude/project-thread-k2xdnp`, built on `claude/clever-hamilton-1zzdgw` plus `main`; not pushed): `npm test` 841 pass; `tsc` clean; `npm run build` (local edition) passes; `scripts/smoke-pages.mts` clean on 73 pages of a local and a host copy. Done this session: release-plan Lane 1 items 1 to 6 and most of 8 (see the status line in `docs/release-plan.md`), separate privacy texts for local and host copies (draft, PRIVACY_VERSION 3), `docs/host-guide.md`, `DS_HOST_CIRCLE_MAX`. **Owner decisions 2026-10-22:** launch with Circles and host forums; hosting is for people who know how (Tailscale for small circles, Headscale for larger); the owner does a wording pass of the whole app next. The owner chose to build the guided `/host` page for v1: H2.2 (the names file) and H2.3 (the page) are built; `npm test` 841 pass, local build passes, `/host` clicked through on a host copy (axe clean, refused from a Tailscale name). Owed: H2.0 and H2.6 (owner), the wording pass, and the push of this branch (awaiting the owner).
+- Checking tools now: `npx tsx scripts/smoke-pages.mts` (every page, two widths, console errors, failed requests, sideways scroll, axe) and `scripts/check-sandbox-headers.mts` against a running local copy; `scripts/scan-history.ts` for the whole history. In the cloud, stop a test server by the pid of its `next-server` process; `ss` is not installed, and a kill pattern that appears in your own command line ends the shell.
+
+**Earlier state at 2026-10-22** (first cloud session; `npm test`: 813 pass; `npm run build` not run):
+- `main` is at the merge of pull request #24. Branches are pushed only when the owner asks.
+- Migrations: highest file is **093** (091 nudge kind for guesses; 092 confidence, companion tick, look-back day, tarot practice, adult confirmation; 093 passkeys; all 2026-10-22 on `claude/project-thread-ohjaho`); the next number is **094**. 091, 092 and 093 are owed on dev and live. The owner reports live is at **087** (2026-10-20, not verifiable from here), so **088 (gallery tags), 089 (art style length) and 090 (write what you sense first) are owed on live** (O1; `live-migration-check`). All new code must still work before its migration (treat Postgres `42P01` and `42703` as "not there yet").
+- Hosting: production runs on the owner's computer on the tailnet and serves one family circle only (`DS_FAMILY_CIRCLE_ID`, fails closed; off Vercel for good since 2026-10-30); everyone else uses the full local edition (portable folders and Docker, built 2026-10-21, unsigned, itch.io). Host mode (a circle leader serves friends over Tailscale) has its first slice (H2.1).
+- Last things built (2026-10-20 and 10-21): tea leaves and ink blots, blind-target practice, four small tools (playing cards, charm casting, signs and dreams), lots from a bag, the Daylight light theme, gallery tags, spread pictures, cloth drag, "write what you sense first" (GF1), portable and Docker packaging, host mode H2.1.
+- Never click-tested by a person or screen reader (the smoke script opens every page but clicks nothing): most of the 2026-10-20 and 10-21 work (E11, GF1 on tarot, oracle, dice, ogham, geomancy and pendulum), and the packaged folders on a clean machine (ED10, F2).
+- ED21 tier 2 (wording of 12 more sensitive concepts) is tested on a seeded PGlite database (2026-10-22); the owner runs `scripts/apply-concept-wording.ts` on dev, then live.
+
+**What exists** (details: Grep `docs/archive/progress-history.md`, "Slices"; the map: `docs/app-map.md`, studied at commit b9680f6, so refresh it with `git diff --stat b9680f6..HEAD` before relying on it for newer areas):
+- Tarot (readings, spreads as layouts, journals, library, encyclopedia and concept graph, Patterns, forum, Claude interpretations) and the oracle deck kit (the person's own sets, several meanings per item with history, own fields, pulls, journals, drawn or uploaded art, picture maker and gallery).
+- Tools, each with the person's meanings first, history, tags, a summary, share-as-text, search, export and import: scrying, pendulum, Norse runes, ogham, dice and coins (with knucklebones), I Ching, geomancy, bibliomancy, playing cards, charm casting, signs and dreams, tea leaves and ink blots, lots from a bag, blind-target practice.
+- Across tools: Patterns, predictions with look-backs, days, header search (Ctrl+K), cloths and zones, own archetypes and concepts (85 shared roots in 12 realms), "write what you sense first", reading comfort (fonts, size, spacing, less motion), seven dark themes plus Daylight, side navigation, circles, circle forums, the AI companion (off until turned on; sees only the person's own words), the interviewer, admin pages, recovery codes, delete account, export, import.
+- Safety and release scaffolding: privacy notice and terms, per-request CSP nonce (no inline styles), rate limits, admin log, backups, provenance record (`docs/provenance.md`), AGPL-3.0-only licence.
+
+**Owed by the owner** (the current list is `docs/open-items.md`, sections B and D): live migrations 088 to 090; the reference bundle (O14); the provenance answers (ED18) and Felix G's written licence agreement (ED20); spend limits (O11); key rotation by 2026-11-12 (O7); the public-release history scan (ED12); NVDA, real-phone and clean-machine checks.
+
+## Working notes (only what is not in a skill)
+- Two databases, no heredocs, the sign-in check in every route, no inline styles, tokens not hex colours, what may reach the browser: all in `before-you-code`. Test accounts: `test-as-user`. Migrations: `add-migration`. Running the app: `run-app` (Windows) or `before-you-code` section 0 (cloud).
+- Only one `next dev` per folder. The user's own dev server may be on port 3000: do not stop it.
+- A reading page must add `<GuessFirst>`; `tests/guess-core.test.ts` pins the list.
+- Many components are CRLF files: a scripted multi-line replace must be line-ending aware. Check with `grep -c $'\r' <file>` first.
+- Older working notes (image model and KoboldCpp timings, pickle files, the throwaway Postgres in Docker, browser-pane quirks, the slow-database evenings): Grep `docs/archive/progress-history.md` for "Old Working notes".
+
+## Remote viewing ideas (brainstormed 2026-10-14)
+
+Current status and the owner's decision are tracked as I1 in `docs/open-items.md`; the notes below are design background, not a separate task list.
+Sources read: declassified CIA/SRI Coordinate Remote Viewing papers (six stages; ideogram = quick kinesthetic first response; analytic overlay "AOL" = the thinking mind filling the gap; blind target; monitor script; feedback afterwards), the CIA/SRI forced-choice work. Tone rule: warm and non-dismissive, never state psi as proven; sealed targets and sealed first impressions serve belief and rigour alike. The full brainstorm is in `docs/archive/progress-history.md`.

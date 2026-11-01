@@ -1,0 +1,79 @@
+# The 64 hexagrams of the I Ching, matched to the shared archetypes (lib/archetypes-data.ts), one to three a hexagram.
+# DRAFT written 2026-10-29 by Claude for the owner to review (open item BIB1). Nothing reads this file yet: it is not in the
+# database and not in lib/symbol-seed-sets.ts. Format and the meaning of each basis: lib/symbol-archetype-map.ts.
+# Order matters: the first link is the hexagram's primary archetype.
+#
+# How it was made. Only from each hexagram's usual English name as the app already shows it (lib/iching-data.ts, the names
+# most English translations share since Wilhelm and Baynes 1950). The Judgment, the Images and the line texts were NOT read
+# for this draft: the app carries no translation of them (Legge 1882 is the public-domain one the sources page points to).
+#   name  the hexagram's own name says the theme ("Waiting", "Peace", "The family")
+#   app   this app's own reading of the name, with nothing behind it; kept so the owner can keep it or drop it
+# A reading of a hexagram from its Judgment would often differ. Checking each line against Legge before it is seeded is the
+# next step, and the owner decides which links stay.
+@basis name = wp-iching
+@basis app =
+
+hexagram-1 | creativity-talent=name, power-authority=app, energy-vitality=app | The Creative (Qián, heaven doubled).
+hexagram-2 | acceptance-surrender=name, nature-earth=app, support-guidance=app | The Receptive (Kūn, earth doubled).
+hexagram-3 | new-beginnings=name, struggle-resilience=name, patience-waiting=app | Difficulty at the start.
+hexagram-4 | youth-innocence=name, learning-wisdom=app, illusion-denial:shadow=name | Youthful folly: the young one who does not yet know.
+hexagram-5 | patience-waiting=name, hope-optimism=app | Waiting.
+hexagram-6 | anger-conflict=name, justice-law=app, diplomacy-compromise=app | Conflict (the name is also translated as a lawsuit or dispute).
+hexagram-7 | order-structure=name, power-authority=app, will-discipline=app | The army.
+hexagram-8 | community-belonging=name, loyalty-trust-betrayal=app | Holding together.
+hexagram-9 | patience-waiting=app, balance-moderation=name | Small taming: a small restraint.
+hexagram-10 | risk-daring=app, diplomacy-compromise=app | Treading. The name alone says little; the well-known image of treading on a tiger's tail is in the Judgment, which was not read. Both links are the app's own.
+hexagram-11 | peace-harmony=name, balance-moderation=app | Peace.
+hexagram-12 | struggle-resilience=app, patience-waiting:shadow=name | Standstill.
+hexagram-13 | community-belonging=name, loyalty-trust-betrayal=app | Fellowship with others.
+hexagram-14 | wealth-prosperity=name, success-recognition=app, generosity-giving=app | Great possession.
+hexagram-15 | pride-ego-humility:light=name, balance-moderation=app | Modesty.
+hexagram-16 | joy-contentment=name, energy-vitality=name, hope-optimism=app | Enthusiasm.
+hexagram-17 | support-guidance=name, flexibility-openness=app, loyalty-trust-betrayal=app | Following.
+hexagram-18 | work-craft=name, healing-health=app, past-memory=app | Work on what has been spoiled (the decayed).
+hexagram-19 | progress-momentum=name, support-guidance=app | Approach.
+hexagram-20 | solitude-reflection=name, learning-wisdom=app, spirituality-faith=app | Contemplation (also translated as viewing).
+hexagram-21 | struggle-resilience=name, decisions-choices=app, justice-law=app | Biting through.
+hexagram-22 | beauty-charm=name, creativity-talent=app | Grace (adornment).
+hexagram-23 | disaster-collapse=name, endings-release=app | Splitting apart.
+hexagram-24 | new-beginnings=name, change-transformation=app | Return (the turning point).
+hexagram-25 | youth-innocence=name, truth-honesty-integrity=app | Innocence (the unexpected, without falseness).
+hexagram-26 | will-discipline=name, patience-waiting=app, learning-wisdom=app | Great taming: a great restraint.
+hexagram-27 | healing-health=name, rest-selfcare=name, parenthood-caregiving=app | Nourishment (the corners of the mouth).
+hexagram-28 | stress-overwhelm=name, risk-daring=app | Great exceeding: too much weight.
+hexagram-29 | fear-anxiety=name, struggle-resilience=app, risk-daring=app | The abyss (water doubled; also translated as danger).
+hexagram-30 | intellect-clarity=name, energy-vitality=name, support-guidance=app | The clinging fire (fire doubled; clarity and what it clings to).
+hexagram-31 | love-romance=app, partnership-marriage=app, communication-expression=app | Influence. The name alone says influence; a reading of it as courtship comes from the usual commentary, not read here. Every link is the app's own.
+hexagram-32 | security-stability=name, patience-waiting=app, partnership-marriage=app | Duration.
+hexagram-33 | solitude-reflection=name, protection-boundaries=app, acceptance-surrender=app | Retreat.
+hexagram-34 | power-authority=name, courage-strength=name, pride-ego-humility:shadow=app | Great power.
+hexagram-35 | progress-momentum=name, success-recognition=app | Progress.
+hexagram-36 | grief-sorrow=app, struggle-resilience=app, protection-boundaries=app | Darkening of the light. Every link is the app's own reading of the name.
+hexagram-37 | family-home=name, duty-responsibility=app | The family.
+hexagram-38 | anger-conflict=name, separation-breakup=app, diplomacy-compromise=app | Opposition.
+hexagram-39 | struggle-resilience=name, patience-waiting=app, decisions-choices=app | Obstruction.
+hexagram-40 | endings-release=name, independence-freedom=name, forgiveness-reconciliation=app | Deliverance.
+hexagram-41 | acceptance-surrender=app, balance-moderation=app, generosity-giving=app | Decrease. Every link is the app's own reading of the name.
+hexagram-42 | wealth-prosperity=name, growth-maturity=name, generosity-giving=app | Increase.
+hexagram-43 | decisions-choices=name, courage-strength=app, truth-honesty-integrity=app | Breakthrough (resoluteness).
+hexagram-44 | love-romance=app, risk-daring=app | Coming to meet. The name says a meeting and no more; both links are the app's own.
+hexagram-45 | community-belonging=name, spirituality-faith=app | Gathering together.
+hexagram-46 | growth-maturity=name, progress-momentum=name, goals-planning=app | Pushing upward.
+hexagram-47 | stress-overwhelm=name, struggle-resilience=name | Oppression (exhaustion).
+hexagram-48 | support-guidance=app, nature-earth=name, community-belonging=app | The well.
+hexagram-49 | change-transformation=name, independence-freedom=app | Revolution (moulting).
+hexagram-50 | change-transformation=app, spirituality-faith=app, tradition-convention=app | The cauldron. A ritual vessel; every link is the app's own reading.
+hexagram-51 | change-transformation=name, fear-anxiety=name, energy-vitality=app | The arousing thunder (shock).
+hexagram-52 | solitude-reflection=name, rest-selfcare=name, focus-concentration=app | Keeping still (the mountain doubled).
+hexagram-53 | growth-maturity=name, patience-waiting=name, progress-momentum=app | Gradual development.
+hexagram-54 | partnership-marriage=name, duty-responsibility=app, tradition-convention=app | The marrying maiden.
+hexagram-55 | wealth-prosperity=name, joy-contentment=app, success-recognition=app | Abundance.
+hexagram-56 | travel-journeys=name, independence-freedom=app, solitude-reflection=app | The wanderer.
+hexagram-57 | flexibility-openness=name, diplomacy-compromise=app, communication-expression=app | The gentle wind (penetrating).
+hexagram-58 | joy-contentment=name, communication-expression=app, play-humour=app | The joyous lake.
+hexagram-59 | endings-release=name, separation-breakup=name, change-transformation=app | Dispersion.
+hexagram-60 | protection-boundaries=name, balance-moderation=name, will-discipline=app | Limitation.
+hexagram-61 | truth-honesty-integrity=name, intuition-inner-knowing=name, loyalty-trust-betrayal=app | Inner truth.
+hexagram-62 | balance-moderation=app, pride-ego-humility=app, patience-waiting=app | Small exceeding. Every link is the app's own reading of the name.
+hexagram-63 | success-recognition=name, endings-release=name, security-stability=app | After completion.
+hexagram-64 | goals-planning=app, patience-waiting=name, hope-optimism=app | Before completion.

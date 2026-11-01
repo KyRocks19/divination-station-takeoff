@@ -1,0 +1,11 @@
+# The five swings every person starts with, matched to the shared archetypes (lib/archetypes-data.ts).
+# Written 2026-10-17 from the mapping the app already had in code (lib/common-meanings-data.ts), so nothing is new or removed.
+# Basis "app" on every link: no traditional key exists for a pendulum and guides disagree (many give clockwise as yes and
+# counter-clockwise as no, some give back and forth as yes). The person's own meaning for a swing always comes first.
+# A line the person adds at another angle has no entry here; see docs/archetype-coverage-audit.md.
+
+swing-line-0 | decisions-choices=app, progress-momentum=app | Carried over from the app's own reading (2026-10-17). Guides disagree on what each swing means.
+swing-line-90 | protection-boundaries=app, decisions-choices=app, patience-waiting=app | Carried over from the app's own reading (2026-10-17). Guides disagree on what each swing means.
+swing-circle_cw | energy-vitality=app, progress-momentum=app, hope-optimism=app | Carried over from the app's own reading (2026-10-17). Guides disagree on what each swing means.
+swing-circle_ccw | endings-release=app, rest-selfcare=app, struggle-resilience=app | Carried over from the app's own reading (2026-10-17). Guides disagree on what each swing means.
+swing-still | patience-waiting=app, solitude-reflection=app, mystery-secrets=app | Carried over from the app's own reading (2026-10-17). Guides disagree on what each swing means.

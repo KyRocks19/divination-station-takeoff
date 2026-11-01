@@ -1,0 +1,172 @@
+# The two sides of a coin and every face of the six dice, matched to the shared archetypes (lib/archetypes-data.ts).
+# Written 2026-10-17 from the mapping the app already had in code (lib/common-meanings-data.ts), so nothing is new or removed.
+# Format and the meaning of each basis: lib/symbol-archetype-map.ts. Order matters: the first link is the primary one.
+#
+# Dice: basis "number". The meaning of a face is the usual numerology reading of its number. A face above 33 carries the
+# archetypes of the number it reduces to (digits added until one is left; 11, 22 and 33 stay as they are). No old source
+# gives a meaning for a face of a die, so "number" means modern practice and says so.
+# Coin: basis "app". The two-sides reading was written for this app; no source says what heads or tails mean.
+# The database is the record once this file is seeded; an admin can change a piece's links without touching this file.
+
+coin-heads | decisions-choices=app, progress-momentum=app, communication-expression=app | Carried over from the app's own two-sides reading (2026-10-17). No source says what heads or tails mean.
+coin-tails | mystery-secrets=app, patience-waiting=app, solitude-reflection=app, rest-selfcare=app | Carried over from the app's own two-sides reading (2026-10-17). No source says what heads or tails mean.
+die-d4-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d4-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d4-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d4-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d6-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-7 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | The number 7 in numerology, carried over from the app's own reading (2026-10-17).
+die-d8-8 | success-recognition=number, wealth-prosperity=number, power-authority=number | The number 8 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-7 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | The number 7 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-8 | success-recognition=number, wealth-prosperity=number, power-authority=number | The number 8 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-9 | endings-release=number, kindness-compassion=number, learning-wisdom=number | The number 9 in numerology, carried over from the app's own reading (2026-10-17).
+die-d10-10 | endings-release=number, new-beginnings=number, success-recognition=number | The number 10 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-7 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | The number 7 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-8 | success-recognition=number, wealth-prosperity=number, power-authority=number | The number 8 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-9 | endings-release=number, kindness-compassion=number, learning-wisdom=number | The number 9 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-10 | endings-release=number, new-beginnings=number, success-recognition=number | The number 10 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-11 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | The number 11 in numerology, carried over from the app's own reading (2026-10-17).
+die-d12-12 | fate-luck-karma=number, order-structure=number, community-belonging=number | The number 12 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-7 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | The number 7 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-8 | success-recognition=number, wealth-prosperity=number, power-authority=number | The number 8 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-9 | endings-release=number, kindness-compassion=number, learning-wisdom=number | The number 9 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-10 | endings-release=number, new-beginnings=number, success-recognition=number | The number 10 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-11 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | The number 11 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-12 | fate-luck-karma=number, order-structure=number, community-belonging=number | The number 12 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-13 | change-transformation=number, endings-release=number, fate-luck-karma=number | The number 13 in numerology, carried over from the app's own reading (2026-10-17).
+die-d20-14 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 14 reduces to 5: 1 + 4 = 5.
+die-d20-15 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 15 reduces to 6: 1 + 5 = 6.
+die-d20-16 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 16 reduces to 7: 1 + 6 = 7.
+die-d20-17 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 17 reduces to 8: 1 + 7 = 8.
+die-d20-18 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 18 reduces to 9: 1 + 8 = 9.
+die-d20-19 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 19 reduces to 1: 1 + 9 = 10, then 1 + 0 = 1.
+die-d20-20 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | Number reading carried over from the app (2026-10-17). 20 reduces to 2: 2 + 0 = 2.
+die-d100-1 | new-beginnings=number, will-discipline=number, identity-individuality=number | The number 1 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-2 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | The number 2 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-3 | creativity-talent=number, communication-expression=number, joy-contentment=number | The number 3 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-4 | security-stability=number, order-structure=number, work-craft=number | The number 4 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-5 | change-transformation=number, independence-freedom=number, struggle-resilience=number | The number 5 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-6 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | The number 6 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-7 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | The number 7 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-8 | success-recognition=number, wealth-prosperity=number, power-authority=number | The number 8 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-9 | endings-release=number, kindness-compassion=number, learning-wisdom=number | The number 9 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-10 | endings-release=number, new-beginnings=number, success-recognition=number | The number 10 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-11 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | The number 11 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-12 | fate-luck-karma=number, order-structure=number, community-belonging=number | The number 12 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-13 | change-transformation=number, endings-release=number, fate-luck-karma=number | The number 13 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-14 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 14 reduces to 5: 1 + 4 = 5.
+die-d100-15 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 15 reduces to 6: 1 + 5 = 6.
+die-d100-16 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 16 reduces to 7: 1 + 6 = 7.
+die-d100-17 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 17 reduces to 8: 1 + 7 = 8.
+die-d100-18 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 18 reduces to 9: 1 + 8 = 9.
+die-d100-19 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 19 reduces to 1: 1 + 9 = 10, then 1 + 0 = 1.
+die-d100-20 | partnership-marriage=number, decisions-choices=number, balance-moderation=number | Number reading carried over from the app (2026-10-17). 20 reduces to 2: 2 + 0 = 2.
+die-d100-21 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 21 reduces to 3: 2 + 1 = 3.
+die-d100-22 | goals-planning=number, work-craft=number, success-recognition=number | The number 22 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-23 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 23 reduces to 5: 2 + 3 = 5.
+die-d100-24 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 24 reduces to 6: 2 + 4 = 6.
+die-d100-25 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 25 reduces to 7: 2 + 5 = 7.
+die-d100-26 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 26 reduces to 8: 2 + 6 = 8.
+die-d100-27 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 27 reduces to 9: 2 + 7 = 9.
+die-d100-28 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 28 reduces to 1: 2 + 8 = 10, then 1 + 0 = 1.
+die-d100-29 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 29 reduces to 11: 2 + 9 = 11.
+die-d100-30 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 30 reduces to 3: 3 + 0 = 3.
+die-d100-31 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 31 reduces to 4: 3 + 1 = 4.
+die-d100-32 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 32 reduces to 5: 3 + 2 = 5.
+die-d100-33 | learning-wisdom=number, kindness-compassion=number, support-guidance=number | The number 33 in numerology, carried over from the app's own reading (2026-10-17).
+die-d100-34 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 34 reduces to 7: 3 + 4 = 7.
+die-d100-35 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 35 reduces to 8: 3 + 5 = 8.
+die-d100-36 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 36 reduces to 9: 3 + 6 = 9.
+die-d100-37 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 37 reduces to 1: 3 + 7 = 10, then 1 + 0 = 1.
+die-d100-38 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 38 reduces to 11: 3 + 8 = 11.
+die-d100-39 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 39 reduces to 3: 3 + 9 = 12, then 1 + 2 = 3.
+die-d100-40 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 40 reduces to 4: 4 + 0 = 4.
+die-d100-41 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 41 reduces to 5: 4 + 1 = 5.
+die-d100-42 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 42 reduces to 6: 4 + 2 = 6.
+die-d100-43 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 43 reduces to 7: 4 + 3 = 7.
+die-d100-44 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 44 reduces to 8: 4 + 4 = 8.
+die-d100-45 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 45 reduces to 9: 4 + 5 = 9.
+die-d100-46 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 46 reduces to 1: 4 + 6 = 10, then 1 + 0 = 1.
+die-d100-47 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 47 reduces to 11: 4 + 7 = 11.
+die-d100-48 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 48 reduces to 3: 4 + 8 = 12, then 1 + 2 = 3.
+die-d100-49 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 49 reduces to 4: 4 + 9 = 13, then 1 + 3 = 4.
+die-d100-50 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 50 reduces to 5: 5 + 0 = 5.
+die-d100-51 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 51 reduces to 6: 5 + 1 = 6.
+die-d100-52 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 52 reduces to 7: 5 + 2 = 7.
+die-d100-53 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 53 reduces to 8: 5 + 3 = 8.
+die-d100-54 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 54 reduces to 9: 5 + 4 = 9.
+die-d100-55 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 55 reduces to 1: 5 + 5 = 10, then 1 + 0 = 1.
+die-d100-56 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 56 reduces to 11: 5 + 6 = 11.
+die-d100-57 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 57 reduces to 3: 5 + 7 = 12, then 1 + 2 = 3.
+die-d100-58 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 58 reduces to 4: 5 + 8 = 13, then 1 + 3 = 4.
+die-d100-59 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 59 reduces to 5: 5 + 9 = 14, then 1 + 4 = 5.
+die-d100-60 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 60 reduces to 6: 6 + 0 = 6.
+die-d100-61 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 61 reduces to 7: 6 + 1 = 7.
+die-d100-62 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 62 reduces to 8: 6 + 2 = 8.
+die-d100-63 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 63 reduces to 9: 6 + 3 = 9.
+die-d100-64 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 64 reduces to 1: 6 + 4 = 10, then 1 + 0 = 1.
+die-d100-65 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 65 reduces to 11: 6 + 5 = 11.
+die-d100-66 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 66 reduces to 3: 6 + 6 = 12, then 1 + 2 = 3.
+die-d100-67 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 67 reduces to 4: 6 + 7 = 13, then 1 + 3 = 4.
+die-d100-68 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 68 reduces to 5: 6 + 8 = 14, then 1 + 4 = 5.
+die-d100-69 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 69 reduces to 6: 6 + 9 = 15, then 1 + 5 = 6.
+die-d100-70 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 70 reduces to 7: 7 + 0 = 7.
+die-d100-71 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 71 reduces to 8: 7 + 1 = 8.
+die-d100-72 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 72 reduces to 9: 7 + 2 = 9.
+die-d100-73 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 73 reduces to 1: 7 + 3 = 10, then 1 + 0 = 1.
+die-d100-74 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 74 reduces to 11: 7 + 4 = 11.
+die-d100-75 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 75 reduces to 3: 7 + 5 = 12, then 1 + 2 = 3.
+die-d100-76 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 76 reduces to 4: 7 + 6 = 13, then 1 + 3 = 4.
+die-d100-77 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 77 reduces to 5: 7 + 7 = 14, then 1 + 4 = 5.
+die-d100-78 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 78 reduces to 6: 7 + 8 = 15, then 1 + 5 = 6.
+die-d100-79 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 79 reduces to 7: 7 + 9 = 16, then 1 + 6 = 7.
+die-d100-80 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 80 reduces to 8: 8 + 0 = 8.
+die-d100-81 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 81 reduces to 9: 8 + 1 = 9.
+die-d100-82 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 82 reduces to 1: 8 + 2 = 10, then 1 + 0 = 1.
+die-d100-83 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 83 reduces to 11: 8 + 3 = 11.
+die-d100-84 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 84 reduces to 3: 8 + 4 = 12, then 1 + 2 = 3.
+die-d100-85 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 85 reduces to 4: 8 + 5 = 13, then 1 + 3 = 4.
+die-d100-86 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 86 reduces to 5: 8 + 6 = 14, then 1 + 4 = 5.
+die-d100-87 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 87 reduces to 6: 8 + 7 = 15, then 1 + 5 = 6.
+die-d100-88 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 88 reduces to 7: 8 + 8 = 16, then 1 + 6 = 7.
+die-d100-89 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 89 reduces to 8: 8 + 9 = 17, then 1 + 7 = 8.
+die-d100-90 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 90 reduces to 9: 9 + 0 = 9.
+die-d100-91 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 91 reduces to 1: 9 + 1 = 10, then 1 + 0 = 1.
+die-d100-92 | intuition-inner-knowing=number, spirituality-faith=number, dreams-vision=number | Number reading carried over from the app (2026-10-17). 92 reduces to 11: 9 + 2 = 11.
+die-d100-93 | creativity-talent=number, communication-expression=number, joy-contentment=number | Number reading carried over from the app (2026-10-17). 93 reduces to 3: 9 + 3 = 12, then 1 + 2 = 3.
+die-d100-94 | security-stability=number, order-structure=number, work-craft=number | Number reading carried over from the app (2026-10-17). 94 reduces to 4: 9 + 4 = 13, then 1 + 3 = 4.
+die-d100-95 | change-transformation=number, independence-freedom=number, struggle-resilience=number | Number reading carried over from the app (2026-10-17). 95 reduces to 5: 9 + 5 = 14, then 1 + 4 = 5.
+die-d100-96 | peace-harmony=number, parenthood-caregiving=number, family-home=number, duty-responsibility=number | Number reading carried over from the app (2026-10-17). 96 reduces to 6: 9 + 6 = 15, then 1 + 5 = 6.
+die-d100-97 | solitude-reflection=number, learning-wisdom=number, spirituality-faith=number | Number reading carried over from the app (2026-10-17). 97 reduces to 7: 9 + 7 = 16, then 1 + 6 = 7.
+die-d100-98 | success-recognition=number, wealth-prosperity=number, power-authority=number | Number reading carried over from the app (2026-10-17). 98 reduces to 8: 9 + 8 = 17, then 1 + 7 = 8.
+die-d100-99 | endings-release=number, kindness-compassion=number, learning-wisdom=number | Number reading carried over from the app (2026-10-17). 99 reduces to 9: 9 + 9 = 18, then 1 + 8 = 9.
+die-d100-100 | new-beginnings=number, will-discipline=number, identity-individuality=number | Number reading carried over from the app (2026-10-17). 100 reduces to 1: 1 + 0 + 0 = 1.

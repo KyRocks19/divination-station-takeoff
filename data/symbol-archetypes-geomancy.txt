@@ -1,0 +1,31 @@
+# The 16 figures of geomancy, matched to the shared archetypes (lib/archetypes-data.ts), one to three a figure.
+# DRAFT written 2026-10-29 by Claude for the owner to review (open item BIB1). Nothing reads this file yet: it is not in the
+# database and not in lib/symbol-seed-sets.ts. Format and the meaning of each basis: lib/symbol-archetype-map.ts.
+# Order matters: the first link is the figure's primary archetype.
+#
+# How it was made. Only from each figure's Latin name and its usual English meaning (lib/geomancy-data.ts). The medieval
+# and Renaissance handbooks also say whether a figure is favourable and which planet and sign it goes with; none of that was
+# read for this draft (a printed manual, such as Skinner 1980, is the check flagged in lib/sources.ts).
+#   name  the figure's own name says the theme ("Amissio", loss; "Laetitia", joy)
+#   app   this app's own reading of the name, with nothing behind it; kept so the owner can keep it or drop it
+# Albus, Rubeus and the two Dragon figures are named for a colour and for the moon's nodes, so the name gives no theme and
+# every link on them is the app's own.
+@basis name = wp-geomancy
+@basis app =
+
+geomancy-populus | community-belonging=name, flexibility-openness=app | Populus, people: a crowd, many together.
+geomancy-via | travel-journeys=name, change-transformation=app, progress-momentum=app | Via, way: a road or path.
+geomancy-albus | peace-harmony=app, intellect-clarity=app | Albus, white. The name is a colour; both links are the app's own.
+geomancy-conjunctio | partnership-marriage=name, community-belonging=app | Conjunctio, conjunction: a joining together.
+geomancy-puella | youth-innocence=name, beauty-charm=app, love-romance=app | Puella, girl.
+geomancy-amissio | grief-sorrow=name, endings-release=name, wealth-prosperity:shadow=name | Amissio, loss: something lost or slipping away.
+geomancy-fortuna-major | fate-luck-karma:light=name, success-recognition=name | Fortuna Major, greater fortune.
+geomancy-fortuna-minor | fate-luck-karma:light=name, progress-momentum=app | Fortuna Minor, lesser fortune.
+geomancy-puer | youth-innocence=name, courage-strength=app, anger-conflict=app | Puer, boy.
+geomancy-rubeus | anger-conflict=app, energy-vitality=app, sensuality-sexuality=app | Rubeus, red. The name is a colour; every link is the app's own.
+geomancy-acquisitio | wealth-prosperity=name, success-recognition=name | Acquisitio, gain.
+geomancy-laetitia | joy-contentment=name, hope-optimism=app | Laetitia, joy.
+geomancy-tristitia | grief-sorrow=name, solitude-reflection=app | Tristitia, sorrow.
+geomancy-carcer | protection-boundaries=name, struggle-resilience=name, security-stability=app | Carcer, prison: an enclosure, being held in.
+geomancy-caput-draconis | new-beginnings=app, fate-luck-karma=app | Caput Draconis, head of the dragon (the moon's north node). Both links are the app's own.
+geomancy-cauda-draconis | endings-release=app, fate-luck-karma=app | Cauda Draconis, tail of the dragon (the moon's south node). Both links are the app's own.

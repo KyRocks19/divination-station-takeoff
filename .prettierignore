@@ -1,0 +1,11 @@
+# Prettier tidies only the files a person saves in the editor (see .vscode/settings.json); these are never touched.
+.next/
+out/
+build/
+dist/
+node_modules/
+public/
+migrations/
+docs/
+*.md
+package-lock.json

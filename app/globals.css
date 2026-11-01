@@ -1,0 +1,1013 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+ * Design tokens (see docs/design-system.md). Each token has the value the screens already used, so adding them
+ * changed nothing in the look. Tailwind turns each one into utilities: --color-surface gives bg-surface,
+ * border-surface, text-surface; --radius-card gives rounded-card; --container-page gives max-w-page.
+ * Screens use these names, not hard-coded hex values, so a change of look is made here once.
+ */
+/* The app's own colours were made the more readable set on 2026-10-12 at the user's request: small grey text, links, the
+   typing border, and error text now reach comfortable contrast (every pair in lib/theme-lab-shared.ts passes). */
+@theme {
+  /* Surfaces, from the page outward */
+  --color-canvas: #0d0d1a;          /* the page background */
+  --color-surface: #12122a;         /* cards and panels */
+  --color-surface-sunken: #0f0f22;  /* a panel inside a panel, such as the opened traditional text */
+  --color-field: #0d0d1a;           /* the inside of an input */
+
+  /* Lines */
+  /* Borders are pink (the user's choice, 2026-10-11). Light pink goes grey-mauve on a dark panel, so the quiet borders use the
+     vivid pink at a low share, and the border under the pointer is the light pink, bright. Changing a pink changes them. */
+  --color-line-faint: color-mix(in oklab, var(--color-blush-deep) 14%, transparent);  /* the quietest border: dividers */
+  --color-line: color-mix(in oklab, var(--color-blush-deep) 30%, transparent);        /* quiet border: cards and panels */
+  --color-line-strong: color-mix(in oklab, var(--color-blush-deep) 44%, transparent); /* input border, top bar */
+  --color-line-accent: color-mix(in oklab, var(--color-blush-deep) 62%, transparent); /* a highlighted panel */
+  --color-line-hover: color-mix(in oklab, var(--color-blush) 85%, transparent);       /* border under the pointer */
+  --color-focus: #a855f7;                                             /* the border of an input being typed in: a darker purple */
+
+  /* Text, from strongest to faintest */
+  --color-ink: #e2e8f0;             /* body text */
+  --color-ink-strong: #f1f5f9;
+  --color-ink-muted: #b8bfcc;
+  --color-ink-faint: #9aa1b3;
+  --color-ink-ghost: #8890a5;
+
+  /* Accent and state */
+  --color-accent: var(--color-purple-700);        /* the main button */
+  --color-accent-hover: #6d00b8;
+  --color-accent-ink: #d3a5ff;    /* links and small actions */
+  --color-accent-ink-hover: #f3e8ff;
+  --color-heading: #f0e0ff;       /* page titles */
+  /* Pastel pink, to sit beside the purples (added 2026-10-11 at the user's request; not used by any screen yet) */
+  --color-blush: #fdccf5;        /* light pastel pink: the main button, and the base of every border */
+  --color-blush-soft: #fd82f0;   /* medium pink: the main button under the pointer */
+  --color-blush-deep: #ff40de;   /* vivid pink: borders under the pointer and highlighted panels */
+
+  /* The top bar (a trial from 2026-10-12): light pink with dark text, and the link you are on in a darker pink */
+  --color-bar: var(--color-blush);
+  --color-bar-ink: #2b0a3d;
+  --color-bar-active: #8a1470;
+
+  --color-ink-soft: #d4dae2;        /* secondary text a step below strong */
+  --color-danger-soft: #ffabba;     /* a lighter error or warning text */
+
+  /* Tones: the purple family the screens use for headings, small labels, tints, and chosen states (light 100 to dark 900) */
+  --color-tone-100: var(--color-purple-100);
+  --color-tone-200: var(--color-purple-200);
+  --color-tone-300: var(--color-purple-300);
+  --color-tone-400: var(--color-purple-400);
+  --color-tone-500: #c57dff;
+  --color-tone-600: #bd65fc;          /* lighter than Tailwind purple-600, so it passes 4.5 to 1 as text (T9b) */
+  --color-tone-700: var(--color-purple-700);
+  --color-tone-800: var(--color-purple-800);
+  --color-tone-900: var(--color-purple-900);
+
+  --color-danger: #ff5c7a;          /* error text */
+  --color-danger-ink: #ff8fa3;      /* a delete action under the pointer */
+  --color-success: #34d399;         /* a good or saved state: text, borders, tints */
+  --color-success-ink: #6ee7b7;     /* a lighter success text */
+  --color-warning: #fbbf24;         /* a caution: text, borders, tints */
+  --color-warning-ink: #fcd34d;     /* a lighter caution text */
+
+  /* Shape */
+  --radius-card: 0.75rem;     /* panels and cards */
+  --radius-control: 0.5rem;   /* buttons and inputs */
+  --container-page: 48rem;    /* the width of a page's content */
+}
+
+:root {
+  --bg: #0d0d1a;
+  --surface: #12122a;
+  --border: rgba(124, 58, 237, 0.25);
+}
+
+html, body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  min-height: 100dvh;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-canvas); }
+::-webkit-scrollbar-thumb { background: var(--color-tone-900); border-radius: 3px; }
+
+.card-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--color-blush-deep) 30%, transparent);
+}
+
+/*
+ * Rendered Markdown (the companion's answers, forum posts, readings) uses the typography plugin's "invert" set, whose colours are fixed light greys and
+ * white: unreadable on a light theme. These put each of its roles on the page's own tokens, so every theme, light or dark, colours it the same way as the
+ * rest of the screen (open item T9). They sit outside the plugin's layer on purpose, so they win over its fixed values.
+ */
+.prose {
+  --tw-prose-invert-body: var(--color-ink-soft);
+  --tw-prose-invert-headings: var(--color-ink-strong);
+  --tw-prose-invert-lead: var(--color-ink-muted);
+  --tw-prose-invert-links: var(--color-accent-ink);
+  --tw-prose-invert-bold: var(--color-ink-strong);
+  --tw-prose-invert-counters: var(--color-ink-faint);
+  --tw-prose-invert-bullets: var(--color-ink-faint);
+  --tw-prose-invert-hr: var(--color-line-strong);
+  --tw-prose-invert-quotes: var(--color-ink);
+  --tw-prose-invert-quote-borders: var(--color-line-strong);
+  --tw-prose-invert-captions: var(--color-ink-faint);
+  --tw-prose-invert-kbd: var(--color-ink-strong);
+  --tw-prose-invert-kbd-shadows: var(--color-line);
+  --tw-prose-invert-code: var(--color-ink-strong);
+  --tw-prose-invert-pre-code: var(--color-ink-soft);
+  --tw-prose-invert-pre-bg: var(--color-surface-sunken);
+  --tw-prose-invert-th-borders: var(--color-line-strong);
+  --tw-prose-invert-td-borders: var(--color-line);
+}
+
+/* Global keyboard focus indicator — applies when navigating by keyboard */
+:focus-visible {
+  outline: 2px solid var(--color-accent-ink);
+  outline-offset: 2px;
+}
+
+/* A page heading that FocusKeeper focused after a move to another page: it is not something to press, so no ring. */
+[data-route-focus]:focus {
+  outline: none;
+}
+
+/* Shuffle animation keyframes — each card gets its own unique path */
+@keyframes shuffle-0 {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20%       { transform: translate(-52px, -10px) rotate(-15deg); }
+  50%       { transform: translate(-14px, -4px) rotate(-4deg); }
+  80%       { transform: translate(6px, -2px) rotate(1deg); }
+}
+@keyframes shuffle-1 {
+  0%, 100% { transform: translate(0, 0) rotate(-1deg); }
+  20%       { transform: translate(48px, -14px) rotate(13deg); }
+  50%       { transform: translate(12px, -7px) rotate(3deg); }
+  80%       { transform: translate(-9px, -1px) rotate(-2deg); }
+}
+@keyframes shuffle-2 {
+  0%, 100% { transform: translate(0, 0) rotate(1deg); }
+  20%       { transform: translate(2px, -32px) rotate(-7deg); }
+  50%       { transform: translate(22px, -12px) rotate(5deg); }
+  80%       { transform: translate(-4px, -3px) rotate(0deg); }
+}
+@keyframes shuffle-3 {
+  0%, 100% { transform: translate(0, 0) rotate(-2deg); }
+  20%       { transform: translate(38px, -6px) rotate(17deg); }
+  50%       { transform: translate(-22px, -9px) rotate(-5deg); }
+  80%       { transform: translate(11px, -1px) rotate(2deg); }
+}
+@keyframes shuffle-4 {
+  0%, 100% { transform: translate(0, 0) rotate(2deg); }
+  20%       { transform: translate(-42px, -18px) rotate(-11deg); }
+  50%       { transform: translate(26px, -6px) rotate(8deg); }
+  80%       { transform: translate(-3px, -2px) rotate(-1deg); }
+}
+
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* No hand-written .sr-only here: Tailwind's own utility does the same job inside its layer. A copy outside the layer
+   always won over the layered `focus:not-sr-only` and `lg:not-sr-only`, so the skip link stayed a clipped 1 px box when
+   it had keyboard focus, and the header's "Settings" and "Search" words never appeared (found 2026-10-16). */
+
+/* ─── Crossroads Map animations ────────────────────────────────────────────── */
+
+/* Seeing Pool — expanding ripple rings */
+@keyframes map-ripple {
+  0%   { r: 12; opacity: 0.7; }
+  100% { r: 26; opacity: 0;   }
+}
+
+/* Stars and altar candles — gentle twinkle */
+@keyframes map-twinkle {
+  0%,  100% { opacity: 0.3; }
+  50%        { opacity: 1;   }
+}
+
+/* Celestial beam between Sanctum and Tower — slow shimmer */
+@keyframes map-beam {
+  0%,  100% { opacity: 0.15; stroke-dashoffset: 0;   }
+  50%        { opacity: 0.45; stroke-dashoffset: -20; }
+}
+
+/* Dream Cavern mist — slow breath in/out */
+@keyframes map-mist {
+  0%,  100% { opacity: 0.12; transform: scaleX(1);    }
+  50%        { opacity: 0.28; transform: scaleX(1.12); }
+}
+
+/* Current location glow — pulsing aura */
+@keyframes map-pulse-glow {
+  0%,  100% { opacity: 0.6; r: 10; }
+  50%        { opacity: 0;   r: 18; }
+}
+
+/* Current location ring — expanding ring around dot */
+@keyframes map-pulse-ring {
+  0%   { r: 8;  opacity: 0.8; }
+  100% { r: 22; opacity: 0;   }
+}
+
+/* Scrying surfaces: slow, low-contrast movement inside the glass. Nothing flashes, and everything
+   stays still when the device asks for reduced motion. */
+@keyframes scry-drift-a {
+  0%      { transform: translate(-14px, -3.5px) scale(1); }
+  4.17%   { transform: translate(-13.49px, -1.33px) scale(1.003); }
+  8.33%   { transform: translate(-11.99px, 1px) scale(1.01); }
+  12.5%   { transform: translate(-9.61px, 3.33px) scale(1.022); }
+  16.67%  { transform: translate(-6.5px, 5.5px) scale(1.037); }
+  20.83%  { transform: translate(-2.88px, 7.36px) scale(1.056); }
+  25%     { transform: translate(1px, 8.79px) scale(1.075); }
+  29.17%  { transform: translate(4.88px, 9.69px) scale(1.094); }
+  33.33%  { transform: translate(8.5px, 10px) scale(1.112); }
+  37.5%   { transform: translate(11.61px, 9.69px) scale(1.128); }
+  41.67%  { transform: translate(13.99px, 8.79px) scale(1.14); }
+  45.83%  { transform: translate(15.49px, 7.36px) scale(1.147); }
+  50%     { transform: translate(16px, 5.5px) scale(1.15); }
+  54.17%  { transform: translate(15.49px, 3.33px) scale(1.147); }
+  58.33%  { transform: translate(13.99px, 1px) scale(1.14); }
+  62.5%   { transform: translate(11.61px, -1.33px) scale(1.128); }
+  66.67%  { transform: translate(8.5px, -3.5px) scale(1.113); }
+  70.83%  { transform: translate(4.88px, -5.36px) scale(1.094); }
+  75%     { transform: translate(1px, -6.79px) scale(1.075); }
+  79.17%  { transform: translate(-2.88px, -7.69px) scale(1.056); }
+  83.33%  { transform: translate(-6.5px, -8px) scale(1.037); }
+  87.5%   { transform: translate(-9.61px, -7.69px) scale(1.022); }
+  91.67%  { transform: translate(-11.99px, -6.79px) scale(1.01); }
+  95.83%  { transform: translate(-13.49px, -5.36px) scale(1.003); }
+  100%    { transform: translate(-14px, -3.5px) scale(1); }
+}
+@keyframes scry-drift-b {
+  0%      { transform: translate(12px, 10.49px) scale(1.1); }
+  4.17%   { transform: translate(11.52px, 12.39px) scale(1.097); }
+  8.33%   { transform: translate(10.12px, 13.59px) scale(1.088); }
+  12.5%   { transform: translate(7.9px, 14px) scale(1.074); }
+  16.67%  { transform: translate(5px, 13.59px) scale(1.055); }
+  20.83%  { transform: translate(1.62px, 12.39px) scale(1.033); }
+  25%     { transform: translate(-2px, 10.49px) scale(1.01); }
+  29.17%  { transform: translate(-5.62px, 8px) scale(0.987); }
+  33.33%  { transform: translate(-9px, 5.11px) scale(0.965); }
+  37.5%   { transform: translate(-11.9px, 2px) scale(0.946); }
+  41.67%  { transform: translate(-14.12px, -1.11px) scale(0.932); }
+  45.83%  { transform: translate(-15.52px, -4px) scale(0.923); }
+  50%     { transform: translate(-16px, -6.49px) scale(0.92); }
+  54.17%  { transform: translate(-15.52px, -8.39px) scale(0.923); }
+  58.33%  { transform: translate(-14.12px, -9.59px) scale(0.932); }
+  62.5%   { transform: translate(-11.9px, -10px) scale(0.946); }
+  66.67%  { transform: translate(-9px, -9.59px) scale(0.965); }
+  70.83%  { transform: translate(-5.62px, -8.39px) scale(0.987); }
+  75%     { transform: translate(-2px, -6.49px) scale(1.01); }
+  79.17%  { transform: translate(1.62px, -4px) scale(1.033); }
+  83.33%  { transform: translate(5px, -1.11px) scale(1.055); }
+  87.5%   { transform: translate(7.9px, 2px) scale(1.074); }
+  91.67%  { transform: translate(10.12px, 5.11px) scale(1.088); }
+  95.83%  { transform: translate(11.52px, 8px) scale(1.097); }
+  100%    { transform: translate(12px, 10.49px) scale(1.1); }
+}
+@keyframes scry-drift-c {
+  0%      { transform: translate(-6px, 13.14px) scale(0.95); }
+  4.17%   { transform: translate(-5.76px, 10.44px) scale(0.953); }
+  8.33%   { transform: translate(-5.06px, 7.1px) scale(0.961); }
+  12.5%   { transform: translate(-3.95px, 3.35px) scale(0.975); }
+  16.67%  { transform: translate(-2.5px, -0.57px) scale(0.992); }
+  20.83%  { transform: translate(-0.81px, -4.38px) scale(1.013); }
+  25%     { transform: translate(1px, -7.82px) scale(1.035); }
+  29.17%  { transform: translate(2.81px, -10.66px) scale(1.057); }
+  33.33%  { transform: translate(4.5px, -12.7px) scale(1.078); }
+  37.5%   { transform: translate(5.95px, -13.82px) scale(1.095); }
+  41.67%  { transform: translate(7.06px, -13.92px) scale(1.109); }
+  45.83%  { transform: translate(7.76px, -13px) scale(1.117); }
+  50%     { transform: translate(8px, -11.14px) scale(1.12); }
+  54.17%  { transform: translate(7.76px, -8.44px) scale(1.117); }
+  58.33%  { transform: translate(7.06px, -5.1px) scale(1.109); }
+  62.5%   { transform: translate(5.95px, -1.35px) scale(1.095); }
+  66.67%  { transform: translate(4.5px, 2.57px) scale(1.078); }
+  70.83%  { transform: translate(2.81px, 6.38px) scale(1.057); }
+  75%     { transform: translate(1px, 9.82px) scale(1.035); }
+  79.17%  { transform: translate(-0.81px, 12.66px) scale(1.013); }
+  83.33%  { transform: translate(-2.5px, 14.7px) scale(0.992); }
+  87.5%   { transform: translate(-3.95px, 15.82px) scale(0.975); }
+  91.67%  { transform: translate(-5.06px, 15.92px) scale(0.961); }
+  95.83%  { transform: translate(-5.76px, 15px) scale(0.953); }
+  100%    { transform: translate(-6px, 13.14px) scale(0.95); }
+}
+/* A ring on the water: it widens slowly, fades in a little, and fades out. */
+@keyframes scry-ripple {
+  0%      { transform: scale(0.08); opacity: 0; }
+  4.17%   { transform: scale(0.118); opacity: 0.007; }
+  8.33%   { transform: scale(0.157); opacity: 0.026; }
+  12.5%   { transform: scale(0.195); opacity: 0.05; }
+  16.67%  { transform: scale(0.233); opacity: 0.074; }
+  20.83%  { transform: scale(0.272); opacity: 0.093; }
+  25%     { transform: scale(0.31); opacity: 0.1; }
+  29.17%  { transform: scale(0.348); opacity: 0.099; }
+  33.33%  { transform: scale(0.387); opacity: 0.097; }
+  37.5%   { transform: scale(0.425); opacity: 0.093; }
+  41.67%  { transform: scale(0.463); opacity: 0.087; }
+  45.83%  { transform: scale(0.502); opacity: 0.081; }
+  50%     { transform: scale(0.54); opacity: 0.074; }
+  54.17%  { transform: scale(0.578); opacity: 0.066; }
+  58.33%  { transform: scale(0.617); opacity: 0.058; }
+  62.5%   { transform: scale(0.655); opacity: 0.05; }
+  66.67%  { transform: scale(0.693); opacity: 0.042; }
+  70.83%  { transform: scale(0.732); opacity: 0.034; }
+  75%     { transform: scale(0.77); opacity: 0.026; }
+  79.17%  { transform: scale(0.808); opacity: 0.019; }
+  83.33%  { transform: scale(0.847); opacity: 0.013; }
+  87.5%   { transform: scale(0.885); opacity: 0.007; }
+  91.67%  { transform: scale(0.923); opacity: 0.003; }
+  95.83%  { transform: scale(0.962); opacity: 0.001; }
+  100%    { transform: scale(1); opacity: 0; }
+}
+.scry-move {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-timing-function: linear; /* the many frames above carry the easing */
+  animation-iteration-count: infinite;
+}
+.scry-drift-a { animation-name: scry-drift-a; animation-duration: 62s; }
+.scry-drift-b { animation-name: scry-drift-b; animation-duration: 76s; }
+.scry-drift-c { animation-name: scry-drift-c; animation-duration: 88s; }
+.scry-ripple  { animation-name: scry-ripple; animation-duration: 36s; animation-timing-function: linear; }
+@media (prefers-reduced-motion: reduce) {
+  .scry-move { animation: none; }
+}
+
+/* Pendulum board: the weight moves slowly and softly, and fades in. Nothing flashes, and everything stays still
+   when the device asks for reduced motion. */
+@keyframes pend-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* A line swing: slowest at the ends, fastest through the middle, once every twenty seconds. */
+@keyframes pend-line {
+  0%      { transform: translate(calc(var(--dx) * -1), calc(var(--dy) * -1)); }
+  3.12%   { transform: translate(calc(var(--dx) * -0.981), calc(var(--dy) * -0.981)); }
+  6.25%   { transform: translate(calc(var(--dx) * -0.924), calc(var(--dy) * -0.924)); }
+  9.38%   { transform: translate(calc(var(--dx) * -0.831), calc(var(--dy) * -0.831)); }
+  12.5%   { transform: translate(calc(var(--dx) * -0.707), calc(var(--dy) * -0.707)); }
+  15.62%  { transform: translate(calc(var(--dx) * -0.556), calc(var(--dy) * -0.556)); }
+  18.75%  { transform: translate(calc(var(--dx) * -0.383), calc(var(--dy) * -0.383)); }
+  21.88%  { transform: translate(calc(var(--dx) * -0.195), calc(var(--dy) * -0.195)); }
+  25%     { transform: translate(calc(var(--dx) * 0), calc(var(--dy) * 0)); }
+  28.12%  { transform: translate(calc(var(--dx) * 0.195), calc(var(--dy) * 0.195)); }
+  31.25%  { transform: translate(calc(var(--dx) * 0.383), calc(var(--dy) * 0.383)); }
+  34.38%  { transform: translate(calc(var(--dx) * 0.556), calc(var(--dy) * 0.556)); }
+  37.5%   { transform: translate(calc(var(--dx) * 0.707), calc(var(--dy) * 0.707)); }
+  40.62%  { transform: translate(calc(var(--dx) * 0.831), calc(var(--dy) * 0.831)); }
+  43.75%  { transform: translate(calc(var(--dx) * 0.924), calc(var(--dy) * 0.924)); }
+  46.88%  { transform: translate(calc(var(--dx) * 0.981), calc(var(--dy) * 0.981)); }
+  50%     { transform: translate(calc(var(--dx) * 1), calc(var(--dy) * 1)); }
+  53.12%  { transform: translate(calc(var(--dx) * 0.981), calc(var(--dy) * 0.981)); }
+  56.25%  { transform: translate(calc(var(--dx) * 0.924), calc(var(--dy) * 0.924)); }
+  59.38%  { transform: translate(calc(var(--dx) * 0.831), calc(var(--dy) * 0.831)); }
+  62.5%   { transform: translate(calc(var(--dx) * 0.707), calc(var(--dy) * 0.707)); }
+  65.62%  { transform: translate(calc(var(--dx) * 0.556), calc(var(--dy) * 0.556)); }
+  68.75%  { transform: translate(calc(var(--dx) * 0.383), calc(var(--dy) * 0.383)); }
+  71.88%  { transform: translate(calc(var(--dx) * 0.195), calc(var(--dy) * 0.195)); }
+  75%     { transform: translate(calc(var(--dx) * 0), calc(var(--dy) * 0)); }
+  78.12%  { transform: translate(calc(var(--dx) * -0.195), calc(var(--dy) * -0.195)); }
+  81.25%  { transform: translate(calc(var(--dx) * -0.383), calc(var(--dy) * -0.383)); }
+  84.38%  { transform: translate(calc(var(--dx) * -0.556), calc(var(--dy) * -0.556)); }
+  87.5%   { transform: translate(calc(var(--dx) * -0.707), calc(var(--dy) * -0.707)); }
+  90.62%  { transform: translate(calc(var(--dx) * -0.831), calc(var(--dy) * -0.831)); }
+  93.75%  { transform: translate(calc(var(--dx) * -0.924), calc(var(--dy) * -0.924)); }
+  96.88%  { transform: translate(calc(var(--dx) * -0.981), calc(var(--dy) * -0.981)); }
+  100%    { transform: translate(calc(var(--dx) * -1), calc(var(--dy) * -1)); }
+}
+@keyframes pend-orbit {
+  to { transform: rotate(360deg); }
+}
+.pend-fade { animation: pend-fade 18s ease-out both; }
+.pend-move {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  animation-iteration-count: infinite;
+}
+/* --pend-speed is the person's own choice of speed (1 is the usual, 0.5 half as fast); see components/pendulum/PendulumSpeed.tsx. */
+.pend-line  { animation-name: pend-line;  animation-duration: calc(20s / var(--pend-speed, 1)); animation-timing-function: linear; }
+.pend-orbit { animation-name: pend-orbit; animation-duration: calc(24s / var(--pend-speed, 1)); animation-timing-function: linear; }
+.pend-ccw   { animation-direction: reverse; }
+@media (prefers-reduced-motion: reduce) {
+  .pend-fade, .pend-move { animation: none; }
+}
+
+/* The phone navigation drawer slides in from the left, unless the person asked for less motion. */
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to   { transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drawer-in { animation: drawer-in 180ms ease-out; }
+}
+
+/* The reveal of a reading (components/reveal/RevealScene.tsx): soft movement while a reading opens. Nothing flashes.
+   Every piece plays at its normal speed and loops for as long as the wait in lib/reveal-core.ts lasts (owner's request, 2026-10-29;
+   the waits stay long). The loops have many frames with linear timing between them, so the easing is in the frames. The pieces
+   that once played only once (pour, steep, spread, appear) fill in, hold, then fade and start again. Under less motion the
+   catch-all further down stops the loops, and the rules after this block show each picture in its finished state. */
+.rv-origin        { transform-box: fill-box; transform-origin: center; }
+.rv-origin-top    { transform-box: view-box; transform-origin: 100px 40px; }
+.rv-origin-bottom { transform-box: fill-box; transform-origin: 50% 100%; }
+.rv-origin-left   { transform-box: view-box; transform-origin: 100px 100px; }
+@keyframes rv-steam {
+  0%      { transform: translate(0px, 8px); opacity: 0; }
+  4.17%   { transform: translate(0.78px, 5.36px); opacity: 0.024; }
+  8.33%   { transform: translate(1.5px, 2.95px); opacity: 0.09; }
+  12.5%   { transform: translate(2.12px, 0.74px); opacity: 0.186; }
+  16.67%  { transform: translate(2.6px, -1.27px); opacity: 0.301; }
+  20.83%  { transform: translate(2.9px, -3.08px); opacity: 0.425; }
+  25%     { transform: translate(3px, -4.72px); opacity: 0.547; }
+  29.17%  { transform: translate(2.9px, -6.18px); opacity: 0.656; }
+  33.33%  { transform: translate(2.6px, -7.48px); opacity: 0.741; }
+  37.5%   { transform: translate(2.12px, -8.63px); opacity: 0.791; }
+  41.67%  { transform: translate(1.5px, -9.63px); opacity: 0.798; }
+  45.83%  { transform: translate(0.78px, -10.5px); opacity: 0.779; }
+  50%     { transform: translate(0px, -11.25px); opacity: 0.741; }
+  54.17%  { transform: translate(-0.78px, -11.88px); opacity: 0.687; }
+  58.33%  { transform: translate(-1.5px, -12.41px); opacity: 0.622; }
+  62.5%   { transform: translate(-2.12px, -12.84px); opacity: 0.547; }
+  66.67%  { transform: translate(-2.6px, -13.19px); opacity: 0.466; }
+  70.83%  { transform: translate(-2.9px, -13.45px); opacity: 0.383; }
+  75%     { transform: translate(-3px, -13.66px); opacity: 0.301; }
+  79.17%  { transform: translate(-2.9px, -13.8px); opacity: 0.222; }
+  83.33%  { transform: translate(-2.6px, -13.9px); opacity: 0.151; }
+  87.5%   { transform: translate(-2.12px, -13.96px); opacity: 0.09; }
+  91.67%  { transform: translate(-1.5px, -13.99px); opacity: 0.042; }
+  95.83%  { transform: translate(-0.78px, -14px); opacity: 0.011; }
+  100%    { transform: translate(0px, -14px); opacity: 0; }
+}
+@keyframes rv-drift {
+  0%      { transform: translateX(-6px); }
+  4.17%   { transform: translateX(-5.8px); }
+  8.33%   { transform: translateX(-5.2px); }
+  12.5%   { transform: translateX(-4.24px); }
+  16.67%  { transform: translateX(-3px); }
+  20.83%  { transform: translateX(-1.55px); }
+  25%     { transform: translateX(0px); }
+  29.17%  { transform: translateX(1.55px); }
+  33.33%  { transform: translateX(3px); }
+  37.5%   { transform: translateX(4.24px); }
+  41.67%  { transform: translateX(5.2px); }
+  45.83%  { transform: translateX(5.8px); }
+  50%     { transform: translateX(6px); }
+  54.17%  { transform: translateX(5.8px); }
+  58.33%  { transform: translateX(5.2px); }
+  62.5%   { transform: translateX(4.24px); }
+  66.67%  { transform: translateX(3px); }
+  70.83%  { transform: translateX(1.55px); }
+  75%     { transform: translateX(0px); }
+  79.17%  { transform: translateX(-1.55px); }
+  83.33%  { transform: translateX(-3px); }
+  87.5%   { transform: translateX(-4.24px); }
+  91.67%  { transform: translateX(-5.2px); }
+  95.83%  { transform: translateX(-5.8px); }
+  100%    { transform: translateX(-6px); }
+}
+@keyframes rv-shuffle {
+  0%      { transform: translateX(0px) rotate(0deg); }
+  4.17%   { transform: translateX(-8.8px) rotate(-1.55deg); }
+  8.33%   { transform: translateX(-17px) rotate(-3deg); }
+  12.5%   { transform: translateX(-24.04px) rotate(-4.24deg); }
+  16.67%  { transform: translateX(-29.44px) rotate(-5.2deg); }
+  20.83%  { transform: translateX(-32.84px) rotate(-5.8deg); }
+  25%     { transform: translateX(-34px) rotate(-6deg); }
+  29.17%  { transform: translateX(-32.84px) rotate(-5.8deg); }
+  33.33%  { transform: translateX(-29.44px) rotate(-5.2deg); }
+  37.5%   { transform: translateX(-24.04px) rotate(-4.24deg); }
+  41.67%  { transform: translateX(-17px) rotate(-3deg); }
+  45.83%  { transform: translateX(-8.8px) rotate(-1.55deg); }
+  50%     { transform: translateX(0px) rotate(0deg); }
+  54.17%  { transform: translateX(8.8px) rotate(1.55deg); }
+  58.33%  { transform: translateX(17px) rotate(3deg); }
+  62.5%   { transform: translateX(24.04px) rotate(4.24deg); }
+  66.67%  { transform: translateX(29.44px) rotate(5.2deg); }
+  70.83%  { transform: translateX(32.84px) rotate(5.8deg); }
+  75%     { transform: translateX(34px) rotate(6deg); }
+  79.17%  { transform: translateX(32.84px) rotate(5.8deg); }
+  83.33%  { transform: translateX(29.44px) rotate(5.2deg); }
+  87.5%   { transform: translateX(24.04px) rotate(4.24deg); }
+  91.67%  { transform: translateX(17px) rotate(3deg); }
+  95.83%  { transform: translateX(8.8px) rotate(1.55deg); }
+  100%    { transform: translateX(0px) rotate(0deg); }
+}
+@keyframes rv-wobble {
+  0%      { transform: rotate(-5deg); }
+  4.17%   { transform: rotate(-4.83deg); }
+  8.33%   { transform: rotate(-4.33deg); }
+  12.5%   { transform: rotate(-3.54deg); }
+  16.67%  { transform: rotate(-2.5deg); }
+  20.83%  { transform: rotate(-1.29deg); }
+  25%     { transform: rotate(0deg); }
+  29.17%  { transform: rotate(1.29deg); }
+  33.33%  { transform: rotate(2.5deg); }
+  37.5%   { transform: rotate(3.54deg); }
+  41.67%  { transform: rotate(4.33deg); }
+  45.83%  { transform: rotate(4.83deg); }
+  50%     { transform: rotate(5deg); }
+  54.17%  { transform: rotate(4.83deg); }
+  58.33%  { transform: rotate(4.33deg); }
+  62.5%   { transform: rotate(3.54deg); }
+  66.67%  { transform: rotate(2.5deg); }
+  70.83%  { transform: rotate(1.29deg); }
+  75%     { transform: rotate(0deg); }
+  79.17%  { transform: rotate(-1.29deg); }
+  83.33%  { transform: rotate(-2.5deg); }
+  87.5%   { transform: rotate(-3.54deg); }
+  91.67%  { transform: rotate(-4.33deg); }
+  95.83%  { transform: rotate(-4.83deg); }
+  100%    { transform: rotate(-5deg); }
+}
+@keyframes rv-hop {
+  0%      { transform: translateY(0px); }
+  4.17%   { transform: translateY(-0.24px); }
+  8.33%   { transform: translateY(-0.94px); }
+  12.5%   { transform: translateY(-2.05px); }
+  16.67%  { transform: translateY(-3.5px); }
+  20.83%  { transform: translateY(-5.19px); }
+  25%     { transform: translateY(-7px); }
+  29.17%  { transform: translateY(-8.81px); }
+  33.33%  { transform: translateY(-10.5px); }
+  37.5%   { transform: translateY(-11.95px); }
+  41.67%  { transform: translateY(-13.06px); }
+  45.83%  { transform: translateY(-13.76px); }
+  50%     { transform: translateY(-14px); }
+  54.17%  { transform: translateY(-13.76px); }
+  58.33%  { transform: translateY(-13.06px); }
+  62.5%   { transform: translateY(-11.95px); }
+  66.67%  { transform: translateY(-10.5px); }
+  70.83%  { transform: translateY(-8.81px); }
+  75%     { transform: translateY(-7px); }
+  79.17%  { transform: translateY(-5.19px); }
+  83.33%  { transform: translateY(-3.5px); }
+  87.5%   { transform: translateY(-2.05px); }
+  91.67%  { transform: translateY(-0.94px); }
+  95.83%  { transform: translateY(-0.24px); }
+  100%    { transform: translateY(0px); }
+}
+@keyframes rv-tumble {
+  0%      { transform: translateY(-40px) rotate(0deg); }
+  4.17%   { transform: translateY(-33.27px) rotate(50.45deg); }
+  8.33%   { transform: translateY(-27.35px) rotate(94.89deg); }
+  12.5%   { transform: translateY(-22.17px) rotate(133.72deg); }
+  16.67%  { transform: translateY(-17.69px) rotate(167.31deg); }
+  20.83%  { transform: translateY(-13.86px) rotate(196.05deg); }
+  25%     { transform: translateY(-10.63px) rotate(220.3deg); }
+  29.17%  { transform: translateY(-7.94px) rotate(240.45deg); }
+  33.33%  { transform: translateY(-5.75px) rotate(256.88deg); }
+  37.5%   { transform: translateY(-4px) rotate(269.98deg); }
+  41.67%  { transform: translateY(-2.65px) rotate(280.11deg); }
+  45.83%  { transform: translateY(-1.65px) rotate(287.66deg); }
+  50%     { transform: translateY(-0.93px) rotate(293deg); }
+  54.17%  { transform: translateY(-0.46px) rotate(296.53deg); }
+  58.33%  { transform: translateY(-0.19px) rotate(298.61deg); }
+  62.5%   { transform: translateY(-0.05px) rotate(299.63deg); }
+  66.67%  { transform: translateY(0px) rotate(299.97deg); }
+  70.83%  { transform: translateY(0) rotate(300.14deg); }
+  75%     { transform: translateY(0) rotate(304.44deg); }
+  79.17%  { transform: translateY(0) rotate(313.38deg); }
+  83.33%  { transform: translateY(0) rotate(325.02deg); }
+  87.5%   { transform: translateY(0) rotate(337.43deg); }
+  91.67%  { transform: translateY(0) rotate(348.68deg); }
+  95.83%  { transform: translateY(0) rotate(356.85deg); }
+  100%    { transform: translateY(0) rotate(360deg); }
+}
+@keyframes rv-flip {
+  0%      { transform: scaleX(1); }
+  4.17%   { transform: scaleX(0.985); }
+  8.33%   { transform: scaleX(0.94); }
+  12.5%   { transform: scaleX(0.868); }
+  16.67%  { transform: scaleX(0.775); }
+  20.83%  { transform: scaleX(0.666); }
+  25%     { transform: scaleX(0.55); }
+  29.17%  { transform: scaleX(0.434); }
+  33.33%  { transform: scaleX(0.325); }
+  37.5%   { transform: scaleX(0.232); }
+  41.67%  { transform: scaleX(0.16); }
+  45.83%  { transform: scaleX(0.115); }
+  50%     { transform: scaleX(0.1); }
+  54.17%  { transform: scaleX(0.115); }
+  58.33%  { transform: scaleX(0.16); }
+  62.5%   { transform: scaleX(0.232); }
+  66.67%  { transform: scaleX(0.325); }
+  70.83%  { transform: scaleX(0.434); }
+  75%     { transform: scaleX(0.55); }
+  79.17%  { transform: scaleX(0.666); }
+  83.33%  { transform: scaleX(0.775); }
+  87.5%   { transform: scaleX(0.868); }
+  91.67%  { transform: scaleX(0.94); }
+  95.83%  { transform: scaleX(0.985); }
+  100%    { transform: scaleX(1); }
+}
+@keyframes rv-page {
+  0%      { transform: scaleX(1); }
+  4.17%   { transform: scaleX(0.966); }
+  8.33%   { transform: scaleX(0.866); }
+  12.5%   { transform: scaleX(0.707); }
+  16.67%  { transform: scaleX(0.5); }
+  20.83%  { transform: scaleX(0.259); }
+  25%     { transform: scaleX(0); }
+  29.17%  { transform: scaleX(-0.259); }
+  33.33%  { transform: scaleX(-0.5); }
+  37.5%   { transform: scaleX(-0.707); }
+  41.67%  { transform: scaleX(-0.866); }
+  45.83%  { transform: scaleX(-0.966); }
+  50%     { transform: scaleX(-1); }
+  54.17%  { transform: scaleX(-1); }
+  58.33%  { transform: scaleX(-1); }
+  62.5%   { transform: scaleX(-1); }
+  66.67%  { transform: scaleX(-1); }
+  70.83%  { transform: scaleX(-1); }
+  75%     { transform: scaleX(-1); }
+  79.17%  { transform: scaleX(-1); }
+  83.33%  { transform: scaleX(-1); }
+  87.5%   { transform: scaleX(-1); }
+  91.67%  { transform: scaleX(-1); }
+  95.83%  { transform: scaleX(-1); }
+  100%    { transform: scaleX(-1); }
+}
+@keyframes rv-swing {
+  0%      { transform: rotate(-16deg); }
+  4.17%   { transform: rotate(-15.45deg); }
+  8.33%   { transform: rotate(-13.86deg); }
+  12.5%   { transform: rotate(-11.31deg); }
+  16.67%  { transform: rotate(-8deg); }
+  20.83%  { transform: rotate(-4.14deg); }
+  25%     { transform: rotate(0deg); }
+  29.17%  { transform: rotate(4.14deg); }
+  33.33%  { transform: rotate(8deg); }
+  37.5%   { transform: rotate(11.31deg); }
+  41.67%  { transform: rotate(13.86deg); }
+  45.83%  { transform: rotate(15.45deg); }
+  50%     { transform: rotate(16deg); }
+  54.17%  { transform: rotate(15.45deg); }
+  58.33%  { transform: rotate(13.86deg); }
+  62.5%   { transform: rotate(11.31deg); }
+  66.67%  { transform: rotate(8deg); }
+  70.83%  { transform: rotate(4.14deg); }
+  75%     { transform: rotate(0deg); }
+  79.17%  { transform: rotate(-4.14deg); }
+  83.33%  { transform: rotate(-8deg); }
+  87.5%   { transform: rotate(-11.31deg); }
+  91.67%  { transform: rotate(-13.86deg); }
+  95.83%  { transform: rotate(-15.45deg); }
+  100%    { transform: rotate(-16deg); }
+}
+@keyframes rv-ripple {
+  0%      { transform: scale(0.1); opacity: 0.8; }
+  4.17%   { transform: scale(0.208); opacity: 0.704; }
+  8.33%   { transform: scale(0.307); opacity: 0.616; }
+  12.5%   { transform: scale(0.397); opacity: 0.536; }
+  16.67%  { transform: scale(0.479); opacity: 0.463; }
+  20.83%  { transform: scale(0.553); opacity: 0.397; }
+  25%     { transform: scale(0.62); opacity: 0.338; }
+  29.17%  { transform: scale(0.68); opacity: 0.284; }
+  33.33%  { transform: scale(0.733); opacity: 0.237; }
+  37.5%   { transform: scale(0.78); opacity: 0.195; }
+  41.67%  { transform: scale(0.821); opacity: 0.159; }
+  45.83%  { transform: scale(0.857); opacity: 0.127; }
+  50%     { transform: scale(0.887); opacity: 0.1; }
+  54.17%  { transform: scale(0.913); opacity: 0.077; }
+  58.33%  { transform: scale(0.935); opacity: 0.058; }
+  62.5%   { transform: scale(0.953); opacity: 0.042; }
+  66.67%  { transform: scale(0.967); opacity: 0.03; }
+  70.83%  { transform: scale(0.978); opacity: 0.02; }
+  75%     { transform: scale(0.986); opacity: 0.013; }
+  79.17%  { transform: scale(0.992); opacity: 0.007; }
+  83.33%  { transform: scale(0.996); opacity: 0.004; }
+  87.5%   { transform: scale(0.998); opacity: 0.002; }
+  91.67%  { transform: scale(0.999); opacity: 0; }
+  95.83%  { transform: scale(1); opacity: 0; }
+  100%    { transform: scale(1); opacity: 0; }
+}
+@keyframes rv-pulse {
+  0%      { transform: scale(0.85); opacity: 0.5; }
+  4.17%   { transform: scale(0.854); opacity: 0.509; }
+  8.33%   { transform: scale(0.867); opacity: 0.533; }
+  12.5%   { transform: scale(0.887); opacity: 0.573; }
+  16.67%  { transform: scale(0.912); opacity: 0.625; }
+  20.83%  { transform: scale(0.943); opacity: 0.685; }
+  25%     { transform: scale(0.975); opacity: 0.75; }
+  29.17%  { transform: scale(1.007); opacity: 0.815; }
+  33.33%  { transform: scale(1.037); opacity: 0.875; }
+  37.5%   { transform: scale(1.063); opacity: 0.927; }
+  41.67%  { transform: scale(1.083); opacity: 0.967; }
+  45.83%  { transform: scale(1.096); opacity: 0.991; }
+  50%     { transform: scale(1.1); opacity: 1; }
+  54.17%  { transform: scale(1.096); opacity: 0.991; }
+  58.33%  { transform: scale(1.083); opacity: 0.967; }
+  62.5%   { transform: scale(1.063); opacity: 0.927; }
+  66.67%  { transform: scale(1.038); opacity: 0.875; }
+  70.83%  { transform: scale(1.007); opacity: 0.815; }
+  75%     { transform: scale(0.975); opacity: 0.75; }
+  79.17%  { transform: scale(0.943); opacity: 0.685; }
+  83.33%  { transform: scale(0.912); opacity: 0.625; }
+  87.5%   { transform: scale(0.887); opacity: 0.573; }
+  91.67%  { transform: scale(0.867); opacity: 0.533; }
+  95.83%  { transform: scale(0.854); opacity: 0.509; }
+  100%    { transform: scale(0.85); opacity: 0.5; }
+}
+.rv-steam   { animation: rv-steam 2.6s linear infinite; }
+.rv-steam-1 { animation-delay: -0.8s; }
+.rv-steam-2 { animation-delay: -1.6s; }
+/* The brew: the pot pours, the tea deepens and holds, then pales again and the pot pours once more. */
+@keyframes rv-pour-loop  { 0% { opacity: 0; } 6% { opacity: 1; } 22% { opacity: 1; } 30%, 100% { opacity: 0; } }
+@keyframes rv-steep-loop { 0%, 19% { opacity: 0; } 75% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; } }
+.rv-pour    { animation: rv-pour-loop 8s ease-in-out infinite both; }
+.rv-steep   { animation: rv-steep-loop 8s ease-in infinite both; }
+.rv-drift   { animation: rv-drift 3s linear infinite; }
+/* The ink spreads in its normal 2.4 s, holds, fades, and is pressed again. */
+@keyframes rv-spread-loop {
+  0%   { transform: scale(0.1); opacity: 0.2; }
+  55%  { transform: scale(1); opacity: 1; }
+  85%  { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.rv-spread  { animation: rv-spread-loop 4.4s ease-out infinite both; transform-box: fill-box; transform-origin: center; }
+.rv-late    { animation-delay: 1.2s; }
+.rv-shuffle   { animation: rv-shuffle 1.6s linear infinite; }
+.rv-shuffle-1 { animation-delay: -0.2s; }
+.rv-shuffle-2 { animation-delay: -0.4s; }
+.rv-wobble  { animation: rv-wobble 1.2s linear infinite; }
+.rv-hop     { animation: rv-hop 1.2s linear infinite; }
+.rv-hop-1   { animation-delay: -0.3s; }
+.rv-hop-2   { animation-delay: -0.6s; }
+.rv-tumble  { animation: rv-tumble 1.4s linear infinite; }
+.rv-tumble-1 { animation-delay: -0.35s; }
+.rv-flip    { animation: rv-flip 0.9s linear infinite; }
+.rv-flip-1  { animation-delay: -0.15s; }
+.rv-flip-2  { animation-delay: -0.3s; }
+/* The geomancy dots each appear in their normal 0.5 s, one after another, hold, and fade in the same order before marking again. */
+@keyframes rv-appear-loop {
+  0%     { opacity: 0; transform: scale(0.4); }
+  8.33%  { opacity: 1; transform: scale(1); }
+  85%    { opacity: 1; transform: scale(1); }
+  95%, 100% { opacity: 0; transform: scale(1); }
+}
+.rv-appear  { animation: rv-appear-loop 6s ease-out infinite both; }
+.rv-appear-1 { animation-delay: 0.4s; } .rv-appear-2 { animation-delay: 0.8s; } .rv-appear-3 { animation-delay: 1.2s; }
+.rv-appear-4 { animation-delay: 1.6s; } .rv-appear-5 { animation-delay: 2s; } .rv-appear-6 { animation-delay: 2.4s; } .rv-appear-7 { animation-delay: 2.8s; }
+.rv-page    { animation: rv-page 1.5s linear infinite; }
+.rv-page-1  { animation-delay: -0.5s; }
+.rv-page-2  { animation-delay: -1s; }
+.rv-swing   { animation: rv-swing 2.4s linear infinite; }
+.rv-ripple  { animation: rv-ripple 3s linear infinite; }
+.rv-ripple-1 { animation-delay: -1s; }
+.rv-ripple-2 { animation-delay: -2s; }
+.rv-pulse   { animation: rv-pulse 2.4s linear infinite; }
+/* Less motion: the looping fills would stop on their faded last frame, so they are switched off and the picture shows finished
+   (the tea at its full colour, the ink pressed, every dot marked, the pot's stream hidden by its own opacity). */
+@media (prefers-reduced-motion: reduce) {
+  .rv-pour, .rv-steep, .rv-spread, .rv-appear { animation: none !important; }
+}
+html[data-motion="less"] :is(.rv-pour, .rv-steep, .rv-spread, .rv-appear) { animation: none !important; }
+/* The reveal's wait bar: fills over the wait, which the component sets as the bar's animation length. */
+@keyframes rv-wait { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rv-wait { transform-origin: left; animation: rv-wait linear both; }
+
+/* "Circles and Tailscale" pictures (components/circles/CirclePictures.tsx): the threads between a host and their friends drift
+   very slowly, and the stars and the feather breathe. Slow on purpose (owner, 2026-10-26); the catch-alls below stop both. */
+@keyframes circle-flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -120; }
+}
+@keyframes circle-breathe {
+  0%   { opacity: 0.35; }
+  25%  { opacity: 0.7; }
+  50%  { opacity: 1; }
+  75%  { opacity: 0.7; }
+  100% { opacity: 0.35; }
+}
+.circle-thread { animation: circle-flow 45s linear infinite; }
+.circle-twinkle { animation: circle-breathe 30s linear infinite; }
+
+/* A person who asked their device for less motion gets none: this catches every animation and transition that has no
+   rule of its own above (the loading pulses, the shuffle, the map). Things still change; they just do not move. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Windows High Contrast and other forced-colour modes replace every background, so a button with only a fill looks like
+   plain text, and "this one is chosen" (shown by a fill) disappears. Draw the missing edges with system colours, and keep
+   the colour swatches the person is choosing between. */
+@media (forced-colors: active) {
+  button,
+  [role="button"] {
+    outline: 1px solid ButtonText;
+    outline-offset: -1px;
+  }
+  a[class*="bg-blush"],
+  a[class*="bg-accent"],
+  a[class*="bg-bar-ink"] {
+    outline: 1px solid LinkText;
+    outline-offset: -1px;
+  }
+  [aria-pressed="true"],
+  [aria-current="page"],
+  [aria-selected="true"] {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+  button[style*="background-color"],
+  [role="img"],
+  canvas {
+    forced-color-adjust: none;
+  }
+  /* A spread's position names and card names are SVG text, which keeps its own colour here (a purple "NOW" on black). */
+  svg[role="group"] text {
+    fill: CanvasText;
+  }
+}
+
+/* Reading comfort (lib/comfort.ts): choices a person makes in Settings, put on <html> as data attributes before the
+   first paint. A standard choice sets no attribute, so the page is exactly as it was. */
+html[data-font="atkinson"],
+html[data-font="atkinson"] body {
+  font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+}
+html[data-font="lexend"],
+html[data-font="lexend"] body {
+  font-family: "Lexend Variable", system-ui, -apple-system, sans-serif;
+}
+html[data-font="opendyslexic"],
+html[data-font="opendyslexic"] body {
+  font-family: "OpenDyslexic", system-ui, -apple-system, sans-serif;
+}
+
+/* Size: every size in the app is in rem, so the root size scales all of it. */
+html[data-size="115"] { font-size: 115%; }
+html[data-size="130"] { font-size: 130%; }
+html[data-size="150"] { font-size: 150%; }
+
+/* Roomy spacing: more room between lines, letters and words, in the range WCAG 1.4.12 asks pages to survive. */
+html[data-spacing="roomy"] body {
+  letter-spacing: 0.04em;
+  word-spacing: 0.1em;
+}
+html[data-spacing="roomy"] body :is(p, li, dd, dt, label, span, a, button, input, select, textarea, h1, h2, h3, h4, h5, h6) {
+  line-height: 1.7;
+}
+
+/* "Less motion" chosen inside the app: the same as the device setting above, for people whose device is not set. */
+html[data-motion="less"] *,
+html[data-motion="less"] *::before,
+html[data-motion="less"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Chinese characters (the I Ching's hexagram and trigram names, components/ui/Hanzi.tsx). None of the reading fonts has them, so they get a
+   Chinese font by name, whichever the device has, instead of whatever the browser picks first (open item T15). */
+.font-hanzi {
+  font-family: "Noto Serif CJK TC", "Noto Sans CJK TC", "Source Han Serif TC", "Microsoft JhengHei", "PingFang TC", "Hiragino Sans CNS", serif;
+}
+
+/* Side column at large text (open item T15). The side column is 14rem wide, so at the larger text sizes it grows with the text and leaves
+   little room for the page on a laptop. Between 1024px and a wider point it gives way to the menu button and drawer, as on a phone.
+   Media queries count in the browser's own text size, not the page's, so the points are set per size. Not in a layer, so they win over
+   the utilities (lg:flex, lg:hidden). */
+@media (min-width: 1024px) and (max-width: 1439.98px) {
+  html[data-size="150"] .sidenav { display: none; }
+  html[data-size="150"] .menu-button { display: flex; }
+}
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  html[data-size="130"] .sidenav { display: none; }
+  html[data-size="130"] .menu-button { display: flex; }
+}
+
+/* With a larger or wider font a long word can be wider than a small phone. Let words break rather than push the page
+   sideways (only when the person has chosen a bigger or wider setting, so the standard page is untouched). */
+html[data-size="130"] body,
+html[data-size="150"] body,
+html[data-font="opendyslexic"] body,
+html[data-spacing="roomy"] body {
+  overflow-wrap: anywhere;
+}
+
+/* The header bar (components/AppHeader.tsx) is 3.5rem tall plus the phone's notch, and stays at the top while the page
+   scrolls. The side column sits under it, and scroll-padding keeps an element that gets focus (or a #link target) from
+   landing under it (WCAG 2.4.11). On a touch screen in a very short window, such as a phone on its side, the header
+   scrolls away with the page instead, so it does not take a third of the screen. A short window on a computer (a zoomed
+   page on a laptop is often under 30rem tall) keeps it: there the person decides, with the Header bar choice in Settings. */
+:root {
+  --header-h: calc(3.5rem + env(safe-area-inset-top));
+}
+@media (max-height: 30rem) and (pointer: coarse) {
+  :root {
+    --header-h: 0px;
+  }
+}
+/* The person turned the sticky header off in Settings (Reading comfort, lib/comfort.ts): it scrolls away with the page at
+   every size, and the side column sticks to the top of the window instead. Not in a layer, so it wins over `sticky`. */
+html[data-header="scrolls"] {
+  --header-h: 0px;
+}
+html[data-header="scrolls"] [data-app-header] {
+  position: static;
+}
+html:has([data-app-header]) {
+  scroll-padding-top: calc(var(--header-h) + 0.5rem);
+}
+
+/* Touch targets: on a phone every button, folding heading ("summary") and choice list is at least 44 px tall (WCAG 2.5.8
+   asks for 24 px; the project asks for 44, see docs/design-system.md). In the base layer so a class such as `min-h-0` can
+   still say otherwise, and a button taken out of the Tab order (tabindex -1, a pointer-only star) keeps the size it was
+   given. Links inside a sentence are exempt, as in WCAG 2.5.8. */
+@layer base {
+  @media (max-width: 639px) {
+    button:not([tabindex="-1"]),
+    summary,
+    select,
+    input[type="color"] {
+      min-height: 2.75rem;
+    }
+    /* a tick box or a round choice is small, so the whole row it sits in is the target */
+    label:has(> input[type="checkbox"]),
+    label:has(> input[type="radio"]) {
+      display: flex;
+      align-items: center;
+      min-height: 2.75rem;
+    }
+  }
+}
+
+/* The full side column floats over the left of the page (owner's request, 2026-10-26). It keeps the narrow column's 3.5rem
+   in the row, so the page sits where it does beside the narrow column and does not move when the menu is widened or
+   narrowed; the rest of its width lies over the page, above it and with a shadow. Outside the layers so it wins over the
+   utilities the column is written with. */
+@media (min-width: 64rem) {
+  html:not([data-nav="narrow"]) .sidenav {
+    margin-right: -10.5rem;
+    z-index: 40;
+    box-shadow: 0.25rem 0 1rem -0.25rem rgb(0 0 0 / 0.45);
+  }
+}
+
+/* The narrow side column (lib/nav-width.ts puts data-nav="narrow" on <html> before the first paint). It keeps only each
+   link's picture; the words stay in the page for a screen reader and for voice control, hidden the way .sr-only hides
+   them. These rules are outside Tailwind's layers on purpose: they have to win over the utilities (`w-56`) the column
+   is written with. Below 1024 px the column is not shown at all (the drawer takes over), so the rules start there. */
+@media (min-width: 64rem) {
+  html[data-nav="narrow"] .sidenav {
+    width: 3.5rem;
+  }
+  html[data-nav="narrow"] .sidenav .nav-text,
+  html[data-nav="narrow"] .sidenav .nav-star {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* A folded group's heading keeps its arrow and its picture; the picture is drawn a size up so the groups are told apart. */
+  html[data-nav="narrow"] .sidenav .nav-group-glyph {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  html[data-nav="narrow"] .sidenav .nav-wide-only {
+    display: none;
+  }
+  html[data-nav="narrow"] .sidenav a,
+  html[data-nav="narrow"] .sidenav button:not(.nav-star) {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0;
+  }
+}
+
+/* The calendar of days (components/days/WitchCalendar.tsx): the bats in its corner drift up and down a little. They stay still when the device or
+   the person asks for less motion (motion-safe, and html[data-motion="less"] above). */
+@keyframes cal-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}

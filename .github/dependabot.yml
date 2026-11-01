@@ -1,0 +1,31 @@
+# Dependabot: security fixes for npm packages, and keeping the pinned GitHub Actions current.
+# Security pull requests also need "Dependabot security updates" switched on in the repository's
+# Settings > Code security (see "Continuous checks" in README.md).
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # 0 turns off ordinary version-bump pull requests: only security fixes are opened. Security fixes are
+    # opened when an advisory appears, not on the schedule; the schedule is still required by the format.
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "Security"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "CI"
