@@ -1,7 +1,7 @@
 import { createReadStream, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { getLocalPool } from "./db";
-import { localDbDir } from "./local-db-core";
+import { errorText, localDbDir } from "./local-db-core";
 import { queryOne } from "./db";
 import { isLocked, protectBytes, unprotectBytes } from "./seal";
 import { BackupInfo, BackupKind, backupName, backupsDirFor, namesToPrune, parseBackupName, sortBackups, weeklyDue } from "./local-backup-core";
@@ -96,7 +96,7 @@ export async function weeklyBackupIfDue(now = new Date()): Promise<BackupInfo | 
     if (!weeklyDue(listBackups(), now, (row?.n ?? 0) > 0)) return null;
     return await makeBackup("weekly", now);
   } catch (err) {
-    console.warn(`[local-backup] weekly backup failed: ${err instanceof Error ? err.message : err}`);
+    console.warn(`[local-backup] weekly backup failed: ${errorText(err)}`);
     return null;
   }
 }

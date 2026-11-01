@@ -162,6 +162,8 @@ function bat(feathered: boolean, node = "node\\node.exe"): string {
   feathered
     ? "rem Optional settings (a different port or data folder): copy settings.example.env to settings.env and edit it."
     : "rem Optional settings (a Claude key, an image program address, a different port or data folder): copy settings.example.env to settings.env and edit it.",
+  "rem Windows hides file extensions, so Notepad often saves settings.env as settings.env.txt, which is never read. Say so instead of ignoring it.",
+  'if exist "%~dp0settings.env.txt" if not exist "%~dp0settings.env" echo Found settings.env.txt but no settings.env, so your settings are not used. Rename the file to settings.env: in File Explorer turn on View, Show, File name extensions to see the .txt.',
   'if exist "%~dp0settings.env" for /f "usebackq eol=# tokens=1,* delims==" %%a in ("%~dp0settings.env") do if not "%%b"=="" set "%%a=%%b"',
   "rem These come after the settings file, because they follow DS_DATA.",
   'set "DS_DB_DIR=%DS_DATA%\\database"',
@@ -267,6 +269,7 @@ function shellScript(mac: boolean, feathered = false, any = false): string {
     '  if [ ! -d "$DS_DATA" ]; then echo "Your data for this copy is kept on another computer, in $DS_DATA. Start it on that computer. If that folder was moved, put it back, or change my-data/where.txt to say where it is now."; exit 1; fi',
     'fi',
     "# Optional settings: copy settings.example.env to settings.env and edit it.",
+    'if [ -f "$HERE/settings.env.txt" ] && [ ! -f "$HERE/settings.env" ]; then echo "Found settings.env.txt but no settings.env, so your settings are not used. Rename the file to settings.env."; fi',
     'if [ -f "$HERE/settings.env" ]; then set -a; . "$HERE/settings.env"; set +a; fi',
     "# These come after the settings file, because they follow DS_DATA.",
     'export DS_DB_DIR="$DS_DATA/database"',

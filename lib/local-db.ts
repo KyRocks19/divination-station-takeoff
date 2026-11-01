@@ -4,7 +4,7 @@ import { NewerDataError, applyMigrations, migrationState } from "./migrations";
 import { backupName, backupsDirFor, namesToPrune, parseBackupName } from "./local-backup-core";
 import { seedSharedData } from "./local-seed";
 import { acquireLock } from "./local-lock";
-import { Lease, pgShaped } from "./local-db-core";
+import { Lease, errorText, openFailureMessage, pgShaped } from "./local-db-core";
 import { makeHeader, newDataKey, openSealed, sealBytes } from "./seal-core";
 import {
   SealLockedError,
@@ -116,11 +116,17 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
       // Loaded here, not at the top of the file, so a hosted copy never loads the WebAssembly files.
       const { PGlite } = await import("@electric-sql/pglite");
       const { unaccent } = await import("@electric-sql/pglite/contrib/unaccent");
-      const db = new PGlite(as === "folder" ? dir : "memory://", {
-        extensions: { unaccent },
-        ...(source ? { loadDataDir: new Blob([source as BlobPart]) } : {}),
-      }) as unknown as PgliteLike;
-      await db.waitReady;
+      // A file problem inside PGlite is thrown as an object with only a number (ErrnoError): turn it into a message that says what went wrong and where.
+      let db: PgliteLike;
+      try {
+        db = new PGlite(as === "folder" ? dir : "memory://", {
+          extensions: { unaccent },
+          ...(source ? { loadDataDir: new Blob([source as BlobPart]) } : {}),
+        }) as unknown as PgliteLike;
+        await db.waitReady;
+      } catch (err) {
+        throw new Error(openFailureMessage(as === "folder" ? dir : `the ${as} database`, err), { cause: err });
+      }
       mode = as;
       // An update brings new migrations to data that already has some: keep a copy of the data as it was before they run (ED9).
       const migrations = migrationsDir ?? join(/* turbopackIgnore: true */ process.cwd(), "migrations");
@@ -175,7 +181,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
     if (timer) clearTimeout(timer);
     timer = setTimeout(() => {
       timer = null;
-      void pool.saveNow().catch((err) => console.warn(`[local-db] could not save the locked data: ${err instanceof Error ? err.message : err}`));
+      void pool.saveNow().catch((err) => console.warn(`[local-db] could not save the locked data: ${errorText(err)}`));
     }, Math.max(0, Math.min(SAVE_IDLE_MS, firstChange + SAVE_MAX_MS - now)));
     timer.unref?.();
   }
@@ -232,7 +238,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
     async end() {
       const release = await lease.take();
       try {
-        await saveHeld().catch((err) => console.warn(`[local-db] could not save the locked data: ${err instanceof Error ? err.message : err}`));
+        await saveHeld().catch((err) => console.warn(`[local-db] could not save the locked data: ${errorText(err)}`));
         await closeHeld();
       } finally {
         release();
@@ -362,7 +368,7 @@ export function makeLocalPool(dir: string, migrationsDir?: string, startInMemory
           ready = null;
           if (as === "folder") rmSync(/* turbopackIgnore: true */ dir, { recursive: true, force: true });
           await open(before, as);
-          throw new Error(`That backup could not be opened, so nothing was changed (${err instanceof Error ? err.message : err}).`);
+          throw new Error(`That backup could not be opened, so nothing was changed (${errorText(err)}).`);
         }
         if (as === "sealed") {
           dirty = true;

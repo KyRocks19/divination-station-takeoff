@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { Lease, localDbDir, pgShaped } from "../lib/local-db-core";
+import { Lease, errorText, isFileError, localDbDir, openFailureMessage, pgShaped } from "../lib/local-db-core";
 import { LAST_UNMARKED_MIGRATION, applyMigrations, migrationFiles, olderVersionsOk, type MigrationDb } from "../lib/migrations";
 
 const root = path.join(__dirname, "..");
@@ -106,4 +106,31 @@ test("every migration after the last unmarked one says ok or no for older versio
   for (const name of names.filter((n) => n > LAST_UNMARKED_MIGRATION)) {
     assert.match(read(`migrations/${name}`), /^--\s*older-versions:\s*(ok|no)\s*$/im, `${name} must have a line "-- older-versions: ok" or "-- older-versions: no"`);
   }
+});
+
+test("errorText never prints [object Object], and names PGlite file problems in plain words", () => {
+  // The shape PGlite throws when its file layer fails (seen on a read-only data folder): only `name` and a WASI errno.
+  const denied = { name: "ErrnoError", errno: 2 };
+  assert.ok(isFileError(denied));
+  assert.equal(errorText(denied), "permission denied (EACCES)");
+  assert.equal(errorText({ name: "ErrnoError", errno: 999 }), "a file problem (file error number 999)");
+  assert.equal(errorText(new Error("boom")), "boom");
+  assert.equal(errorText(new Error("outer", { cause: denied })), "outer (permission denied (EACCES))");
+  assert.equal(errorText({ message: "plain object" }), "plain object");
+  assert.equal(errorText({ status: 1 }), "{\"status\":1}");
+  assert.equal(errorText("text"), "text");
+  for (const v of [{}, Object.create(null), denied, { name: "ErrnoError", errno: 44 }]) assert.ok(!errorText(v).includes("[object Object]"), String(v?.constructor?.name));
+});
+
+test("openFailureMessage says where, what and what to try", () => {
+  const msg = openFailureMessage("F:\\my-data\\database", { name: "ErrnoError", errno: 69 });
+  assert.match(msg, /F:\\my-data\\database/);
+  assert.match(msg, /read-only \(EROFS\)/);
+  assert.match(msg, /write-protected/);
+  assert.equal(openFailureMessage("x", new Error("odd")), "The database in x could not be opened: odd.");
+});
+
+test("local-db.ts wraps the PGlite opening, and the db and backup logs use errorText", () => {
+  assert.match(read("lib/local-db.ts"), /openFailureMessage\(/);
+  for (const f of ["lib/db.ts", "lib/local-backup.ts", "lib/local-db.ts"]) assert.doesNotMatch(read(f), /err instanceof Error \? err\.message : (String\()?err/, f);
 });
