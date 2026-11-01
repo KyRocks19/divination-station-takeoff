@@ -33,7 +33,8 @@ export default function ShuffleDeck({ still = false, className = "" }: { still?:
             {/* Card back decoration */}
             <div className="absolute inset-[6px] rounded-lg border border-line">
               <div className="absolute inset-[6px] rounded-md border border-tone-600/20 flex items-center justify-center">
-                <SigilMark className="text-tone-500/60 text-xl select-none" />
+                {/* 2.5 times the old text-xl size (owner's request, 2026-11-01). */}
+                <SigilMark className="text-tone-500/60 text-[50px] select-none" />
               </div>
             </div>
           </div>
