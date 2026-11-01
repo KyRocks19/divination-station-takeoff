@@ -12,7 +12,7 @@ import { allOwnLinks } from "@/lib/own-archetypes";
 import { oracleItemHref, symbolLabel } from "@/lib/piece-labels";
 import { TakesList } from "@/components/DivinationTakes";
 import { DIVINATION_SLUG } from "@/lib/divination-takes-core";
-import { keptTakeIds, listOwnTakes } from "@/lib/divination-takes";
+import { hiddenTakeIds, keptTakeIds, listOwnTakes } from "@/lib/divination-takes";
 
 /** The pieces this person linked to this shared archetype themselves. */
 async function ownPieces(userId: number, slug: string) {
@@ -91,9 +91,9 @@ export default async function ArchetypePage({ params }: { params: Promise<{ slug
           <p className="text-xs text-ink-faint">
             The home page shows one of these each time it opens. Some are playful, some are a believer&rsquo;s view, some a
             skeptic&rsquo;s. Write your own, and keep the ones that say something true for you: your own come round on the home page
-            too, and only you can see them.
+            too, and only you can see them. Hide any you do not want to see again; you can show them again here.
           </p>
-          <TakesList kept={await keptTakeIds(session.userId)} own={await listOwnTakes(session.userId)} />
+          <TakesList kept={await keptTakeIds(session.userId)} hidden={await hiddenTakeIds(session.userId)} own={await listOwnTakes(session.userId)} />
         </section>
       )}
 
