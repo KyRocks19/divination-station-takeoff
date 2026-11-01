@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useGuess } from "@/components/useGuess";
 import RevealScene from "@/components/reveal/RevealScene";
 import { setOpening } from "@/components/reveal/reveal-store";
+import { useRevealWait } from "@/components/reveal/useRevealWait";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { styleRef } from "@/lib/apply-style";
@@ -66,7 +67,10 @@ function markSeen(key: string) {
  */
 export default function Reveal({ divinationId, readingKey, createdAt, spec, tea = null, question = null, focus = [], children }: Props) {
   const { state, held } = useGuess(divinationId);
-  const ready = divinationId === null || divinationId === undefined || state.loaded;
+  // The one wait's length is the person's choice in Settings (30 seconds to five minutes), read before the opening starts.
+  const [waitSeconds] = useRevealWait();
+  const ms = waitSeconds === null ? spec.ms : waitSeconds * 1000;
+  const ready = (divinationId === null || divinationId === undefined || state.loaded) && waitSeconds !== null;
   const [phase, setPhase] = useState<Phase>("waiting");
   const [method, setMethod] = useState<string | null>(null);
 
@@ -91,11 +95,11 @@ export default function Reveal({ divinationId, readingKey, createdAt, spec, tea 
     let live = true;
     if (spec.random) void loadMethod().then((m) => live && setMethod(m));
     const finish = () => setPhase("covered");
-    const done = setTimeout(finish, spec.ms);
+    const done = setTimeout(finish, ms);
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
     window.addEventListener("keydown", onKey);
     return () => { live = false; clearTimeout(done); window.removeEventListener("keydown", onKey); };
-  }, [phase, spec]);
+  }, [phase, spec, ms]);
 
   // The first-impression card follows the opening.
   useEffect(() => {
@@ -143,7 +147,7 @@ export default function Reveal({ divinationId, readingKey, createdAt, spec, tea 
           <div role="status" className="fixed inset-x-0 bottom-0 pb-[max(2.5rem,env(safe-area-inset-bottom))] px-6 text-center space-y-3">
             <p className="text-base text-ink-soft leading-relaxed max-w-xl mx-auto">{revealLine(spec, spec.random ? method : null)}</p>
             <div className="mx-auto h-1 w-48 max-w-full overflow-hidden rounded-full bg-tone-700/30" aria-hidden="true">
-              <div className="rv-wait h-full w-full bg-tone-400" ref={styleRef({ animationDuration: `${spec.ms}ms` })} />
+              <div className="rv-wait h-full w-full bg-tone-400" ref={styleRef({ animationDuration: `${ms}ms` })} />
             </div>
             <Button variant="text" className="min-h-11" onClick={() => setPhase("covered")}>{COVERED_WORDS.skipWait}</Button>
           </div>

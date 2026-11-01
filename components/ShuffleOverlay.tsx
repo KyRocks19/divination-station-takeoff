@@ -1,26 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { styleRef } from "@/lib/apply-style";
 import ShuffleDeck from "@/components/ShuffleDeck";
-import { Button } from "@/components/ui/Button";
 import { COVERED_WORDS } from "@/lib/reveal-core";
-
-/** The least time the shuffle shows, in milliseconds (15 s more than the old 1.8 s). "I am ready" and Escape end it early. */
-export const SHUFFLE_MS = 16800;
-
-/**
- * The shuffle's wait: `done` settles after SHUFFLE_MS (at once for a person who asked for less motion), or as soon as `skip` is called.
- * The draw is made at the same time, so skipping never skips the draw.
- */
-export function shuffleWait(calm: boolean): { done: Promise<void>; skip: () => void } {
-  let skip = () => {};
-  const done = new Promise<void>((resolve) => {
-    const t = setTimeout(resolve, calm ? 0 : SHUFFLE_MS);
-    skip = () => { clearTimeout(t); resolve(); };
-  });
-  return { done, skip };
-}
 
 interface Props {
   count: number;
@@ -29,52 +10,32 @@ interface Props {
   /** What is drawn, one and many: "card" and "cards". */
   one?: string;
   many?: string;
-  /** Ends the wait early ("I am ready", or Escape). */
-  onSkip?: () => void;
+  /** The question or intention, shown as the reading's opening will show it. */
+  question?: string | null;
 }
 
-/** A pause with slowly moving card backs while a draw is made. Not shown to anyone who asked for less motion. */
-export default function ShuffleOverlay({ count, group = "deck", one = "card", many = "cards", onSkip }: Props) {
-  const [phase, setPhase] = useState<"shuffle" | "draw">("shuffle");
+/**
+ * The shuffling deck while a draw is made and saved. It has no wait of its own any more: holding the question and shuffling are one
+ * step (owner's request, 2026-11-01), and that step is the reading's opening (components/reveal/Reveal.tsx), whose length the person
+ * chooses in Settings. This only covers the moment between pressing the button and the reading page taking over, and it looks like the
+ * start of that opening so the two read as one. Not shown to anyone who asked for less motion.
+ */
+export default function ShuffleOverlay({ count, group = "deck", one = "card", many = "cards", question = null }: Props) {
   // Cards are shuffled; stones, staves and charms are mixed.
   const verb = group === "deck" ? "Shuffling" : "Mixing";
-  const drawing = `Drawing ${count} ${count !== 1 ? many : one}`;
-
-  useEffect(() => {
-    // The words change about three quarters of the way through, as they did before the wait was made longer.
-    const t = setTimeout(() => setPhase("draw"), Math.round(SHUFFLE_MS * 0.72));
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (!onSkip) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onSkip(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onSkip]);
+  const words = `${verb} the ${group} and drawing ${count} ${count !== 1 ? many : one}…`;
+  const q = question?.trim() || null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-canvas/96 backdrop-blur-sm [animation:overlay-fade-in_0.25s_ease-out]">
-      <div role="status" aria-label={phase === "shuffle" ? `${verb} the ${group}` : drawing} className="flex flex-col items-center">
-        <ShuffleDeck />
-
-        {/* Status text */}
-        <div className="mt-14 text-center space-y-3">
-          <p className="text-tone-200 text-xs tracking-[0.2em] uppercase transition-opacity duration-300">
-            {phase === "shuffle" ? `${verb} the ${group}…` : `${drawing}…`}
-          </p>
-          <div className="flex justify-center gap-1.5" aria-hidden="true">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-1 h-1 rounded-full bg-tone-500"
-                ref={styleRef({ animation: `pulse 1s ease-in-out ${-i * 0.2}s infinite` })}
-              />
-            ))}
-          </div>
-        </div>
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-canvas/95 backdrop-blur-sm px-4 pb-40 [animation:overlay-fade-in_0.25s_ease-out]">
+      <div className="text-center space-y-2 max-w-xl">
+        <p className="text-xs uppercase tracking-widest text-ink-faint">{q ? COVERED_WORDS.holdQuestion : COVERED_WORDS.holdNoQuestion}</p>
+        {q && <p className="text-lg text-ink-strong leading-relaxed whitespace-pre-wrap break-words">{q}</p>}
       </div>
-      {onSkip && <Button variant="text" className="mt-6 min-h-11" onClick={onSkip}>{COVERED_WORDS.skipWait}</Button>}
+      <ShuffleDeck className="w-[min(55vw,15rem)] min-h-[260px]" />
+      <div role="status" className="fixed inset-x-0 bottom-0 pb-[max(2.5rem,env(safe-area-inset-bottom))] px-6 text-center">
+        <p className="text-base text-ink-soft leading-relaxed max-w-xl mx-auto">{words}</p>
+      </div>
     </div>
   );
 }
