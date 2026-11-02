@@ -6,6 +6,7 @@ import { clip, firstOf, tooLong } from "@/lib/limits";
 import { getPrefs } from "@/lib/prefs";
 import { skyAt } from "@/lib/sky";
 import { jsonBody } from "@/lib/own-http";
+import { markOwnDraw } from "@/lib/own-draw";
 
 export async function GET() {
   const session = await getSession();
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
   if (!session.userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const sent = await jsonBody(request);
   if (sent instanceof Response) return sent;
-  const { spread_id, layout_id, spread_name, title, question, cards, notes, tz } = sent;
+  const { spread_id, layout_id, spread_name, title, question, cards, notes, tz, own_draw } = sent;
   if (!spread_name || !Array.isArray(cards)) {
     return Response.json({ error: "spread_name and cards are required" }, { status: 400 });
   }
@@ -66,6 +67,8 @@ export async function POST(request: NextRequest) {
       layoutId,
       layoutName: layoutId ? spread_name : null,
     });
+    // Cards the person drew with their own deck and entered here: the reading opens at once (lib/own-draw.ts).
+    if (own_draw === true) await markOwnDraw(client, [rows[0].id]);
     return rows[0].id as number;
   });
 

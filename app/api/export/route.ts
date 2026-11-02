@@ -75,6 +75,8 @@ export async function GET(request: NextRequest) {
     sky: readingSky(r, prefs.hemisphere),
     cards: JSON.parse(r.cards) as DrawnCard[],
     clarifiers: (r.clarifiers ? JSON.parse(r.clarifiers) : {}) as ClarifierMap,
+    // Drawn with the person's own deck and recorded here (migration 106).
+    own_draw: r.own_draw === true,
     tags: readingTags.filter((t) => t.reading_id === r.id).map((t) => t.name),
     journals: journalRows
       .filter((j) => j.reading_id === r.id)

@@ -57,6 +57,8 @@ interface Props {
   guess?: "meanings" | "plain" | "off";
   /** How the result opens: it stays covered until the "sense first" step is done or skipped, then opens after this animation (lib/reveal-core.ts). */
   reveal: RevealSpec;
+  /** The person cast or drew this themselves and entered it: it opens at once, with no wait and no "sense first" step (lib/own-draw.ts). */
+  ownDraw?: boolean;
   /** A tea-leaf reading's tea, for the colour of the brewing cup. */
   tea?: TeaKind | null;
   /** A few words to bring to mind while the reading opens (a tea's concepts). */
@@ -74,7 +76,8 @@ export default function ReadingShell(p: Props) {
   const router = useRouter();
   const questionId = useId();
   const hints = usePrefs().scaffolding === "more";
-  const guessMode = p.guess ?? "plain";
+  // A reading the person recorded from their own cast has nothing left to sense first: its result is already known.
+  const guessMode = p.ownDraw ? "off" : (p.guess ?? "plain");
   const tools = useChosenTools();
   // An entry can start an oracle card only when the oracle deck is among the person's tools.
   const cardMaker = tools === null || tools.includes("oracle") ? { deckId: null } : undefined;
@@ -172,7 +175,7 @@ export default function ReadingShell(p: Props) {
 
       <GuessProvider divinationId={guessMode === "off" ? null : p.reading.id}>
         {guessMode !== "off" && <GuessFirst divinationId={p.reading.id} holdsMeanings={guessMode === "meanings"} />}
-        <Reveal divinationId={guessMode === "off" ? null : p.reading.id} readingKey={`d${p.reading.id}`} createdAt={p.reading.created_at} spec={p.reveal} tea={p.tea} question={question} focus={p.focus}>
+        <Reveal divinationId={guessMode === "off" ? null : p.reading.id} readingKey={`d${p.reading.id}`} createdAt={p.reading.created_at} spec={p.reveal} tea={p.tea} question={question} focus={p.focus} ownDraw={p.ownDraw}>
           {p.children}
         </Reveal>
       </GuessProvider>

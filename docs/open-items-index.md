@@ -50,6 +50,7 @@ Read this list to see what is open. To work on an item, Grep its ID in `docs/ope
 - **O15** (DONE (owner, 2026-10-30)) The owner reports migrations up to 103 are on live; the code guard for it was taken out on `dark-main` (2026-10-30).
 - **O16** (DONE (owner, 2026-10-30)) The owner reports migrations up to 103 are on live; the code guard for it was taken out on `dark-main` (2026-10-30).
 - **O17** (DONE (owner, 2026-10-30)) Migration 104 is on live (owner, 2026-10-30) and its guard was taken out.
+- **O18** (OWNER) Run migration 106 (readings drawn with your own deck, 2026-11-02, branch `claude/project-thread-dkj5hv`) on dev, then live.
 - **O13** (OWNER) Publish on itch.io: make the reference bundle, run `npx tsx scripts/build-local-package.ts`, zip the folder, push it (butler or upload), publish the…
 - **ED20** (DONE (owner, 2026-10-26)) Felix G has agreed in writing to the AGPL v3 code licence, the licence the owner chose.
 - **P5** (OWNER) Run the stray-art finder once against the real shared art folder using both dev and live addresses; keep it in report-only mode unless the results…

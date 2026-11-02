@@ -89,7 +89,7 @@ function NewReadingForm() {
       ...placeOf(pos),
     }));
 
-    await saveReading(drawn);
+    await saveReading(drawn, false);
   }
 
   function initManual() {
@@ -112,7 +112,13 @@ function NewReadingForm() {
     );
   }
 
-  async function saveReading(cards: DrawnCard[]) {
+  /** A card already given to another position: one deck holds each card once, so it cannot be chosen twice. */
+  function takenElsewhere(cardId: string, i: number): boolean {
+    return drawnCards.some((c, k) => k !== i && c.card_id === cardId);
+  }
+
+  /** Saves the reading. `ownDraw`: the person drew these cards with their own deck, so the reading opens at once (no wait, no lock). */
+  async function saveReading(cards: DrawnCard[], ownDraw: boolean) {
     setSaving(true);
     const res = await fetch("/api/readings", {
       method: "POST",
@@ -125,6 +131,7 @@ function NewReadingForm() {
         cards,
         notes: description.trim() || null,
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        own_draw: ownDraw,
       }),
     });
     if (res.ok) {
@@ -243,6 +250,7 @@ function NewReadingForm() {
         <div className="space-y-6">
           <p className="text-sm text-ink-muted">
             For each position, choose the card you drew and tick <span className="text-ink-strong">Reversed</span> if it came out upside down.
+            You have already seen these cards, so the reading opens straight away, with no wait and no &ldquo;write what you sense first&rdquo; step.
           </p>
           <ul className="flex flex-wrap gap-6 justify-center list-none p-0 m-0" aria-label="Cards to assign">
             {drawnCards.map((card, i) => (
@@ -261,13 +269,13 @@ function NewReadingForm() {
                     <option value="">— Select card —</option>
                     <optgroup label="Major Arcana">
                       {TAROT_DECK.filter((c) => c.suit === "major").map((c) => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
+                        <option key={c.id} value={c.id} disabled={takenElsewhere(c.id, i)}>{c.name}</option>
                       ))}
                     </optgroup>
                     {(["cups", "pentacles", "swords", "wands"] as const).map((suit) => (
                       <optgroup key={suit} label={suit.charAt(0).toUpperCase() + suit.slice(1)}>
                         {TAROT_DECK.filter((c) => c.suit === suit).map((c) => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
+                          <option key={c.id} value={c.id} disabled={takenElsewhere(c.id, i)}>{c.name}</option>
                         ))}
                       </optgroup>
                     ))}
@@ -294,7 +302,7 @@ function NewReadingForm() {
               ← Back
             </button>
             <button
-              onClick={() => saveReading(drawnCards)}
+              onClick={() => saveReading(drawnCards, true)}
               disabled={saving || drawnCards.some((c) => !c.card_id)}
               className="flex-1 bg-blush hover:bg-blush-soft disabled:opacity-40 text-canvas font-semibold py-2 rounded-lg text-sm transition-colors"
             >

@@ -66,6 +66,7 @@ export default function ChartView({ initialChart, initialEntries, sky }: Props) 
       initialEntries={initialEntries}
       sky={sky}
       guess="meanings"
+      ownDraw={initialChart.method === "entered"}
       api={`/api/geomancy/${initialChart.id}`}
       listHref="/geomancy"
       listLabel="Geomancy"

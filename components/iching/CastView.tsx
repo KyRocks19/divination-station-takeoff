@@ -62,6 +62,7 @@ export default function CastView({ initialCast, initialEntries, sky }: Props) {
       initialEntries={initialEntries}
       sky={sky}
       guess="meanings"
+      ownDraw={cast.method === "entered"}
       api={`/api/iching/${cast.id}`}
       listHref="/iching"
       listLabel="I Ching"
