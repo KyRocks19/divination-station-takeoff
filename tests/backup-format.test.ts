@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { backupFileName, fieldsWithoutColumn, filesToKeep, filesToRemove, hostOf, parseBackupName, sslFor, tableOrder } from "../lib/backup-format";
+import { readFileSync } from "node:fs";
+import { backupFileName, fieldsWithoutColumn, filesToKeep, filesToRemove, hostOf, newerThanThisCopy, parseBackupName, sslFor, tableOrder } from "../lib/backup-format";
 
 test("fields of a backed-up row with no column in the target are listed, so a restore cannot lose them quietly", () => {
   assert.deepEqual(fieldsWithoutColumn(["id", "username", "seeker_config", "ai_provider"], ["id", "username"]), ["ai_provider", "seeker_config"]);
@@ -65,4 +66,19 @@ test("the host is shown without the password, and a database on this computer ne
   assert.deepEqual(sslFor("postgresql://u:p@ep-x.neon.tech/db"), { rejectUnauthorized: true });
   assert.equal(sslFor("postgresql://u:p@localhost:5432/db"), false);
   assert.equal(sslFor("postgresql://u:p@127.0.0.1:5432/db"), false);
+});
+
+test("a move to a local folder stops when the backup had migrations this copy does not have", () => {
+  assert.deepEqual(newerThanThisCopy(["001_a.sql", "106_b.sql"], ["001_a.sql", "105_c.sql"]), ["106_b.sql"]);
+  // A copy with more migrations than the backup is fine: the new folder gets them.
+  assert.deepEqual(newerThanThisCopy(["001_a.sql"], ["001_a.sql", "105_c.sql"]), []);
+});
+
+test("the restore and the local move share one restore, and the move never connects to a database server", () => {
+  const restore = readFileSync("scripts/restore-db.ts", "utf8");
+  const move = readFileSync("scripts/neon-to-local.ts", "utf8");
+  assert.match(restore, /restoreInto\(/);
+  assert.match(move, /restoreInto\(/);
+  assert.doesNotMatch(move, /from "pg"/);
+  assert.doesNotMatch(move, /process\.env\.DATABASE_URL/);
 });

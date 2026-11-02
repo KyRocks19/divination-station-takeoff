@@ -196,6 +196,8 @@ if ($Mode -eq "start") {
 Write-Host ""
 Write-Host "== Starting: npm run $Mode (in a new window; close that window to stop the app)" -ForegroundColor Cyan
 $portArg = if ($Port -ne 3000) { " -- -p $Port" } else { "" }
+# npm run start on a data folder (DS_DB_DIR in .env.local) closes its database itself on Ctrl+C; the new window inherits this (docs/move-off-neon.md).
+if ($Mode -eq 'start' -and (Select-String -Path (Join-Path $project '.env.local') -Pattern '^\s*DS_DB_DIR\s*=\s*\S' -Quiet -ErrorAction SilentlyContinue)) { $env:NEXT_MANUAL_SIG_HANDLE = '1' }
 Start-Process powershell.exe -WorkingDirectory $project -ArgumentList "-NoExit", "-Command", "npm run $Mode$portArg"
 $url = "http://127.0.0.1:$Port/login"
 for ($i = 0; $i -lt 90; $i++) {
