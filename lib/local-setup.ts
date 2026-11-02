@@ -1,17 +1,30 @@
 import { queryOne } from "./db";
 import { localDbDir } from "./local-db-core";
 import { isLocked } from "./seal";
+import { isLocalEdition } from "./edition";
 import { LOOPBACK_HOSTS, cameThroughProxy, hostName, type HeaderReader } from "./host-guard";
 
 // First-run set-up of a copy that keeps its data in a folder on the computer (open item ED9): until someone has made the one account, every page
-// leads to /setup. It exists only when DS_DB_DIR is set and the users table is empty, so a hosted copy (a Postgres server) never offers it. Server code only.
+// leads to /setup. It exists only in the local edition (Winged or Feathered), when DS_DB_DIR is set and the users table is empty. A hosted copy never
+// offers it, even one that keeps its data in a DS_DB_DIR folder (the family circle after the move off Neon, docs/move-off-neon.md): its accounts come
+// from the move or from invites, so an empty folder there means the folder is the wrong one, and the sign-in page says so (hostedFolderEmpty). Server code only.
+
+async function noAccounts(): Promise<boolean> {
+  const row = await queryOne<{ n: number }>("SELECT COUNT(*)::int AS n FROM users");
+  return (row?.n ?? 0) === 0;
+}
 
 /** True while this is a local copy with no account yet. */
 export async function needsSetup(): Promise<boolean> {
   // A locked copy has an account (whoever locked it), and its database cannot be asked until it is opened.
-  if (!localDbDir() || isLocked()) return false;
-  const row = await queryOne<{ n: number }>("SELECT COUNT(*)::int AS n FROM users");
-  return (row?.n ?? 0) === 0;
+  if (!localDbDir() || isLocked() || !isLocalEdition()) return false;
+  return noAccounts();
+}
+
+/** True for a hosted copy whose DS_DB_DIR folder has no accounts: most likely the move off Neon did not fill it, or DS_DB_DIR names another folder. */
+export async function hostedFolderEmpty(): Promise<boolean> {
+  if (!localDbDir() || isLocked() || isLocalEdition()) return false;
+  return noAccounts();
 }
 
 /**

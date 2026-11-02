@@ -82,8 +82,17 @@ test("set-up is only offered to this computer, and only while there is no accoun
   const route = read("app/api/setup/route.ts");
   assert.ok(route.indexOf("reachedOnThisComputer(request") < route.indexOf("await needsSetup()"), "the host is checked first");
   assert.ok((route.match(/needsSetup\(\)/g) ?? []).length >= 2, "asked again once the request holds the turn");
-  assert.match(read("lib/local-setup.ts"), /if \(!localDbDir\(\)( \|\| isLocked\(\))?\) return false/, "a hosted copy never offers it");
+  assert.match(read("lib/local-setup.ts"), /if \(!localDbDir\(\)( \|\| isLocked\(\))?( \|\| !isLocalEdition\(\))?\) return false/, "a hosted copy never offers it");
   assert.match(read("app/setup/page.tsx"), /if \(!localDbDir\(\)\) notFound\(\)/);
+});
+
+test("a hosted copy with a data folder never offers set-up, and its sign-in page says when the folder is empty", () => {
+  // The family circle moved off Neon into a DS_DB_DIR folder (docs/move-off-neon.md) but stays the hosted edition: DS_DB_DIR alone must not mean set-up.
+  const setup = read("lib/local-setup.ts");
+  assert.match(setup, /if \(!localDbDir\(\) \|\| isLocked\(\) \|\| !isLocalEdition\(\)\) return false/, "needsSetup asks the edition");
+  assert.match(setup, /export async function hostedFolderEmpty[\s\S]*?isLocalEdition\(\)\) return false/);
+  assert.match(read("app/setup/page.tsx"), /if \(!isLocalEdition\(\)\) notFound\(\)/);
+  assert.match(read("app/login/page.tsx"), /emptyFolder=\{emptyFolder\}/);
 });
 
 test("the proxy lets the set-up through, the login page leads to it, and instrumentation loads the secrets before the first request", () => {
