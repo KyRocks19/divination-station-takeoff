@@ -14,22 +14,31 @@ type Circle = NonNullable<CircleView["circle"]>;
 export default function MyAgreement({ circle, busy, onChange, host = false }: { circle: Circle; busy: boolean; onChange: (agreed: boolean) => void; host?: boolean }) {
   const [ticked, setTicked] = useState(false);
   const { claude: c, i_agreed: agreed } = circle;
+  // On a leader's own copy (host mode) the circle's key and computer are the only ones, so there is nothing to agree to until one is added,
+  // and no line about "the app's own" (owner request 2026-11-02: nothing is shown for what is not set up).
+  const hasComputer = circle.pictures.has_computer;
+  if (host && !c.has_key && !hasComputer) return null;
+  const heading = host ? [c.has_key ? "Claude requests" : null, hasComputer ? "pictures" : null].filter(Boolean).join(" and ") : "Claude requests and pictures";
 
   return (
     <section aria-labelledby="circle-my-agreement" className="space-y-3 border border-line-faint rounded-control p-4">
-      <h2 id="circle-my-agreement" className="text-sm text-ink-muted font-medium">Your Claude requests and pictures</h2>
+      <h2 id="circle-my-agreement" className="text-sm text-ink-muted font-medium">Your {heading}</h2>
       {agreed ? (
         <>
-          <p className="text-sm text-ink-soft">
-            {c.has_key
-              ? `When you ask Claude for help, it goes through this circle's key, up to ${c.member_limit} requests a day for you.`
-              : "This circle has no Claude key yet, so the app's own Claude is used for you. If a key is added, your requests will go through it."}
-          </p>
-          <p className="text-sm text-ink-soft">
-            {circle.pictures.has_computer
-              ? `The pictures you ask for are made on the circle's picture computer, which is ${circle.pictures.awake ? "awake" : "asleep right now, so they wait until it wakes"}.`
-              : "This circle has no picture computer yet, so the app's own is used for your pictures."}
-          </p>
+          {(c.has_key || !host) && (
+            <p className="text-sm text-ink-soft">
+              {c.has_key
+                ? `When you ask Claude for help, it goes through this circle's key, up to ${c.member_limit} requests a day for you.`
+                : "This circle has no Claude key yet, so the app's own Claude is used for you. If a key is added, your requests will go through it."}
+            </p>
+          )}
+          {(hasComputer || !host) && (
+            <p className="text-sm text-ink-soft">
+              {hasComputer
+                ? `The pictures you ask for are made on the circle's picture computer, which is ${circle.pictures.awake ? "awake" : "asleep right now, so they wait until it wakes"}.`
+                : "This circle has no picture computer yet, so the app's own is used for your pictures."}
+            </p>
+          )}
           <Button
             variant="quiet"
             disabled={busy}
@@ -44,8 +53,10 @@ export default function MyAgreement({ circle, busy, onChange, host = false }: { 
       ) : (
         <>
           <p className="text-sm text-ink-soft">
-            {c.has_key ? "This circle has a Claude key. It is not used for you; the app's own Claude is." : "The app's own Claude is used for you."}{" "}
-            You can choose to use the circle&apos;s instead.
+            {host
+              ? `This circle has ${c.has_key && hasComputer ? "a Claude key and a picture computer" : c.has_key ? "a Claude key" : "a picture computer"}. You can choose to use it.`
+              : <>{c.has_key ? "This circle has a Claude key. It is not used for you; the app's own Claude is." : "The app's own Claude is used for you."}{" "}
+                You can choose to use the circle&apos;s instead.</>}
           </p>
           <SharingNotice headingId="circle-my-notice" host={host} />
           <label className="flex items-start gap-2 text-sm text-ink-soft">

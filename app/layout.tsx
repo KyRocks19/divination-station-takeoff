@@ -29,6 +29,8 @@ import { FeedbackProvider } from "@/components/FeedbackDialog";
 import { COMFORT_BOOT_SCRIPT, comfortAttributes } from "@/lib/comfort";
 import ComfortMirror from "@/components/ComfortMirror";
 import { NAV_BOOT_SCRIPT } from "@/lib/nav-width";
+import { aiReadyFor } from "@/lib/ai-ready";
+import { AiReadyProvider } from "@/components/AiReady";
 
 export const metadata: Metadata = {
   title: { default: "Divination Station", template: "%s · Divination Station" },
@@ -50,6 +52,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getSession();
   const prefs = session.userId ? await getPrefs(session.userId) : null;
   const edition = shapeOf();
+  // Which AI features can run here: one whose key, model or picture computer is not set up is left out of every page (lib/ai-ready.ts).
+  const aiReady = await aiReadyFor(session.userId);
   // Choices kept in the account (migration 079) are put on <html> here, so they follow the person to any device. Without them the head script below
   // applies what this device kept, as before (it also serves the sign-in page).
   const accountComfort = prefs?.comfort ?? null;
@@ -87,7 +91,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   sticky side navigation never has to slide up under the header when the page is scrolled to its end. */}
               <div className="flex-1 min-w-0 flex flex-col">
                 <main id="main" tabIndex={-1} className="flex-1 min-w-0 focus:outline-none">
-                  <ChosenToolsProvider tools={prefs?.tools ?? null}>{children}</ChosenToolsProvider>
+                  <AiReadyProvider ready={aiReady}>
+                    <ChosenToolsProvider tools={prefs?.tools ?? null}>{children}</ChosenToolsProvider>
+                  </AiReadyProvider>
                 </main>
                 <SiteFooter />
               </div>

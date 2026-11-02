@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { errorText } from "@/lib/ai-client";
@@ -187,5 +187,6 @@ function GuidePanelInner({ divinationId }: { divinationId: number }) {
 
 /** Not in the Feathered edition, which has no AI (docs/plan-feathered-edition.md). */
 export default function GuidePanel(props: { divinationId: number }) {
-  return FEATHERED ? null : <GuidePanelInner {...props} />;
+  // Left out when this copy cannot run it (no Claude key; always in Feathered): lib/ai-ready-core.ts.
+  return useAiReady().claude ? <GuidePanelInner {...props} /> : null;
 }

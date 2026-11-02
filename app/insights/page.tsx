@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -591,6 +591,7 @@ function OtherToolSummaries({ summaries, shown }: { summaries: ToolSummary[]; sh
 
 // ─── Main content (embeddable) ────────────────────────────────────────────────
 export function InsightsContent() {
+  const ai = useAiReady();
   const [data, setData] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -815,8 +816,8 @@ export function InsightsContent() {
             </section>
           )}
 
-          {/* Hiero pattern reading (Claude), not in the Feathered edition */}
-          {!FEATHERED && <HieroPatternReading />}
+          {/* Hiero pattern reading (Claude): only with a Claude key that works, never in Feathered */}
+          {ai.claude && <HieroPatternReading />}
         </>
       )}
     </div>

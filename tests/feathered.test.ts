@@ -119,22 +119,25 @@ test("random.org is answered by this computer in Feathered: no request is made",
 });
 
 test("the AI components draw nothing in Feathered", () => {
+  // The AI pieces ask useAiReady (components/AiReady.tsx), which is all false in Feathered (effectiveAiReady, tests/ai-ready.test.ts).
   for (const f of [
     "components/CompanionPanel.tsx",
     "components/GuidePanel.tsx",
     "components/InterviewPanel.tsx",
     "components/CompanionNoticed.tsx",
     "components/PatternQuestion.tsx",
-    "components/account/ClaudeTokens.tsx",
-    "components/PasskeySettings.tsx",
     "components/CompanionFocusCard.tsx",
   ]) {
+    assert.match(read(f), /return useAiReady\(\)\.(claude|companion) \? </, f);
+  }
+  for (const f of ["components/account/ClaudeTokens.tsx", "components/PasskeySettings.tsx"]) {
     assert.match(read(f), /return FEATHERED \? null : </, f);
   }
   // The Settings choice of random.org, the companion block and the picture maker are left out there too.
   const settings = read("app/settings/page.tsx");
   assert.match(settings, /!\(FEATHERED && value === "random\.org"\)/);
-  assert.equal((settings.match(/\{!FEATHERED && \(/g) ?? []).length, 2);
+  assert.equal((settings.match(/\{ai\.pictures && \(/g) ?? []).length, 1);
+  assert.equal((settings.match(/\{ai\.companion && \(/g) ?? []).length, 1);
 });
 
 test("the Feathered build registers no service worker", () => {

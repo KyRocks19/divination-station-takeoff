@@ -1,6 +1,7 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
+import { adultOnlyThings } from "@/lib/ai-ready-core";
 import { useEffect, useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { reloadPrefs, usePrefs } from "@/components/usePrefs";
@@ -12,6 +13,7 @@ import { reloadPrefs, usePrefs } from "@/components/usePrefs";
 export default function AdultSetting() {
   const uid = useId();
   const prefs = usePrefs();
+  const words = adultOnlyThings(useAiReady());
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
   // The box changes at once and goes back if the answer could not be saved.
@@ -29,7 +31,7 @@ export default function AdultSetting() {
     }).catch(() => null);
     if (res?.ok) {
       await reloadPrefs();
-      setNote(next ? "Saved. The features below are available." : FEATHERED ? "Saved. Sensitive meanings are locked." : "Saved. Sensitive meanings, the companion and the Claude buttons are locked.");
+      setNote(next ? "Saved. The features below are available." : words.locked);
     } else {
       setChecked(!next);
       setNote((await res?.json().catch(() => null))?.error ?? "That could not be saved. Try again.");
@@ -41,10 +43,8 @@ export default function AdultSetting() {
     <Card className="space-y-3" role="group" aria-labelledby={`${uid}-h`}>
       <h3 id={`${uid}-h`} className="font-semibold text-ink-strong">Age</h3>
       <p className="text-sm text-ink-muted">
-        {/* The Feathered edition has no AI, so only the sensitive meanings are locked there. */}
-        {FEATHERED
-          ? "The app is open to every age. Sensitive meanings (words that name abuse, sexual content or violence) are only for adults. They stay locked until you confirm your age here. Your answer is saved in your account and nobody checks it."
-          : "The app is open to every age. Three things are only for adults: sensitive meanings (words that name abuse, sexual content or violence), the AI companion, and the buttons that ask Claude. They stay locked until you confirm your age here. Your answer is saved in your account and nobody checks it."}
+        {/* Only the AI features this copy has are named (none in Feathered). */}
+        {words.intro}
       </p>
       <label className="flex items-center gap-3 min-h-11 text-sm text-ink cursor-pointer">
         <input

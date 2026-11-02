@@ -6,6 +6,7 @@ import { CONFIDENCE_LABELS, FITS, FIT_LABELS, MAX_FIT_NOTE_LENGTH, MAX_GUESS_LEN
 import { useGuess } from "@/components/useGuess";
 import { useOpening } from "@/components/reveal/reveal-store";
 import { usePrefs } from "@/components/usePrefs";
+import { useAiReady } from "@/components/AiReady";
 import ReadingExtras from "@/components/ReadingExtras";
 import { Button, buttonClass } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -50,6 +51,7 @@ function GuessCard({ divinationId, holdsMeanings = true }: Props) {
   const [confirmForget, setConfirmForget] = useState(false);
   const [confidence, setConfidence] = useState<Confidence | null>(null);
   const prefs = usePrefs();
+  const ai = useAiReady();
   const opening = useOpening(divinationId);
 
   const { state } = g;
@@ -139,7 +141,7 @@ function GuessCard({ divinationId, holdsMeanings = true }: Props) {
           Sealed {parseDate(guess.sealed_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
           {guess.confidence ? ` · how sure you felt: ${CONFIDENCE_LABELS[guess.confidence].toLowerCase()}` : ""}
         </p>
-        {(prefs.companionEnabled || guess.companion_ok) && (
+        {ai.companion && (prefs.companionEnabled || guess.companion_ok) && (
           <label className="flex items-start gap-2 text-sm text-ink-soft">
             <input
               type="checkbox"

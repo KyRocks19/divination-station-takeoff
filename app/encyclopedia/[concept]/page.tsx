@@ -5,7 +5,7 @@ import Link from "next/link";
 import { SUIT_META } from "@/lib/suit-meta";
 import { SectionLabel } from "@/components/ui/Page";
 import { ConceptNote } from "@/components/SensitiveMeanings";
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { SigilMark } from "@/components/ui/AppSigil";
 
 interface CardEntry {
@@ -65,6 +65,7 @@ export default function ConceptPage({
 }) {
   const { concept: encodedConcept } = use(params);
   const conceptName = decodeURIComponent(encodedConcept);
+  const ai = useAiReady();
 
   const [data, setData] = useState<ConceptData | null>(null);
   const [description, setDescription] = useState<string>("");
@@ -219,7 +220,7 @@ export default function ConceptPage({
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <SectionLabel>About this concept</SectionLabel>
-          {!description && !generating && !FEATHERED && (
+          {!description && !generating && ai.claude && (
             <button
               onClick={generateDescription}
               className="text-xs bg-tone-800/60 hover:bg-tone-700/60 text-tone-200 px-3 py-1 min-h-11 sm:min-h-6 rounded-lg transition-colors"
@@ -245,7 +246,7 @@ export default function ConceptPage({
           </>
         ) : (
           !generating && (
-            <p className="text-sm text-ink-ghost italic">{FEATHERED ? "No description yet." : "No description yet. Hiero can write one for you; only you will see it."}</p>
+            <p className="text-sm text-ink-ghost italic">{ai.claude ? "No description yet. Hiero can write one for you; only you will see it." : "No description yet."}</p>
           )
         )}
         {descError && <p role="status" className="text-sm text-danger">{descError}</p>}

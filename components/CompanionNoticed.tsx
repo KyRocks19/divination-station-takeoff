@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useEffect, useId, useState } from "react";
 import { savePrefs, usePrefs } from "@/components/usePrefs";
 import { useCompanionJobs } from "@/components/useCompanionJobs";
@@ -138,5 +138,6 @@ function CompanionNoticedInner() {
 
 /** Not in the Feathered edition, which has no AI (docs/plan-feathered-edition.md). */
 export default function CompanionNoticed() {
-  return FEATHERED ? null : <CompanionNoticedInner />;
+  // Left out when this copy cannot run it (no companion model; always in Feathered): lib/ai-ready-core.ts.
+  return useAiReady().companion ? <CompanionNoticedInner /> : null;
 }
