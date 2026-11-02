@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useId, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,6 +36,7 @@ function startingPlace(i: number) {
  */
 export default function LayoutEditor({ initial }: Props) {
   const router = useRouter();
+  const ai = useAiReady();
   const nameId = useId();
   const descId = useId();
   const questionId = useId();
@@ -167,8 +168,8 @@ export default function LayoutEditor({ initial }: Props) {
       <section aria-label="Positions" className="space-y-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <SectionLabel>Positions ({layout.positions.length})</SectionLabel>
-          {/* Claude suggests the colours, so the Feathered edition leaves the button out. */}
-          {!FEATHERED && (
+          {/* Claude suggests the colours, so the button is left out without a Claude key that works (and always in Feathered). */}
+          {ai.claude && (
             <button type="button" onClick={suggestColors} disabled={suggesting || !anyNamed} className={buttonClass.text}>
               {suggesting ? "Suggesting…" : "Suggest colours from the names"}
             </button>

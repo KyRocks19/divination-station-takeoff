@@ -1,26 +1,27 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { AskContent } from "@/components/AskContent";
 
 type Tab = "readings" | "layouts" | "ask";
 
-// The Feathered edition has no AI, so no "Ask Claude" tab (docs/plan-feathered-edition.md).
-const TABS: { id: Tab; label: string }[] = [
+// No "Ask Claude" tab when this copy has no Claude key that works, and never in Feathered (lib/ai-ready-core.ts).
+const tabsFor = (claude: boolean): { id: Tab; label: string }[] => [
   { id: "readings", label: "Readings" },
   { id: "layouts", label: "Layouts" },
-  ...(FEATHERED ? [] : [{ id: "ask" as const, label: "Ask Claude" }]),
+  ...(claude ? [{ id: "ask" as const, label: "Ask Claude" }] : []),
 ];
 
 export default function ReadingsTabWrapper({ children, forum = true }: { children: React.ReactNode; forum?: boolean }) {
   const [tab, setTab] = useState<Tab>("readings");
+  const claude = useAiReady().claude;
 
   return (
     <div className="max-w-page mx-auto px-4 py-8">
       <div className="flex flex-wrap gap-1.5 mb-6 border-b border-line pb-4">
-        {TABS.map((t) => (
+        {tabsFor(claude).map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
@@ -46,7 +47,7 @@ export default function ReadingsTabWrapper({ children, forum = true }: { childre
           <ButtonLink href="/layouts" variant="primary">Open your layouts</ButtonLink>
         </div>
       )}
-      {tab === "ask" && !FEATHERED && <AskContent forum={forum} />}
+      {tab === "ask" && claude && <AskContent forum={forum} />}
     </div>
   );
 }

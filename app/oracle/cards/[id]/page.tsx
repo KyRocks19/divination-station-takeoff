@@ -1,4 +1,3 @@
-import { FEATHERED } from "@/lib/edition";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
@@ -6,7 +5,7 @@ import { getPrefs } from "@/lib/prefs";
 import { listCardPulls, listDecks, listFieldNames, loadCard, toId, type OracleCard, type OracleCardPull } from "@/lib/oracle";
 import OracleCardEditor from "@/components/oracle/OracleCardEditor";
 import { BackLink } from "@/components/ui/Page";
-import { configuredImageToolUrl } from "@/lib/image-tool";
+import { aiReadyFor } from "@/lib/ai-ready";
 import { imageMode } from "@/lib/image-queue";
 import { artDir } from "@/lib/art-store";
 
@@ -19,13 +18,14 @@ export default async function OracleCardPage({ params }: { params: Promise<{ id:
   if (!session.userId) redirect("/login");
 
   const cardId = toId(id);
-  const [card, prefs, fieldNames, decks, pulls] = await Promise.all([
+  const [card, prefs, fieldNames, decks, pulls, ai] = await Promise.all([
     loadCard(session.userId, cardId),
     getPrefs(session.userId),
     listFieldNames(session.userId),
     listDecks(session.userId),
     // One more than the page shows, so it can say there are earlier ones.
     listCardPulls(session.userId, cardId, 0, PULLS_SHOWN + 1),
+    aiReadyFor(session.userId),
   ]);
   if (!card) {
     return (
@@ -49,8 +49,9 @@ export default async function OracleCardPage({ params }: { params: Promise<{ id:
       morePulls={allPulls.length > PULLS_SHOWN}
       showQuestions={prefs.oraclePrompts}
       fieldNames={fieldNames}
-      artHelp={!FEATHERED && prefs.artHelp}
-      imageToolReady={imageMode() === "queue" || configuredImageToolUrl() !== null}
+      // The picture maker is left out when no image tool or picture computer is set up (always in Feathered): lib/ai-ready.ts.
+      artHelp={ai.pictures && prefs.artHelp}
+      imageToolReady={ai.pictures}
       imageMode={imageMode()}
       artOnDisk={artDir() !== null}
     />

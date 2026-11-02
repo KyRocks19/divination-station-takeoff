@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { errorText } from "@/lib/ai-client";
@@ -225,5 +225,6 @@ function InterviewPanelInner({ readingId, divinationId, onSave }: InterviewPanel
 
 /** Not in the Feathered edition, which has no AI (docs/plan-feathered-edition.md). */
 export default function InterviewPanel(props: InterviewPanelProps) {
-  return FEATHERED ? null : <InterviewPanelInner {...props} />;
+  // Left out when this copy cannot run it (no Claude key; always in Feathered): lib/ai-ready-core.ts.
+  return useAiReady().claude ? <InterviewPanelInner {...props} /> : null;
 }

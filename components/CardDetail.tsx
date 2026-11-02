@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState, useRef } from "react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -64,6 +64,7 @@ export default function CardDetail({
   onClose,
 }: Props) {
   const prefs = usePrefs();
+  const ai = useAiReady();
   const clarifiers = savedClarifiers;
 
   // The user's own first impression
@@ -301,8 +302,8 @@ export default function CardDetail({
         })}
       </MeaningsPanel>
 
-      {/* Hiero: asks first, interprets only when asked. Not in the Feathered edition, which has no AI. */}
-      {readingContext && !FEATHERED && (
+      {/* Hiero: asks first, interprets only when asked. Only when this copy has a Claude key that works (never in Feathered). */}
+      {readingContext && ai.claude && (
         <section aria-label="Hiero" className="border-t border-line pt-4 space-y-3">
           <div className="flex gap-2">
             <button

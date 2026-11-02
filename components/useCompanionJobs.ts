@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAiReady } from "@/components/AiReady";
 import type { CompanionMode } from "@/lib/companion-modes";
 import type { JobView, NoteView } from "@/lib/companion-queue-types";
 
@@ -47,7 +48,9 @@ const param = (s: Subject) => (s.patterns ? "patterns=1" : s.self ? "self=1" : s
  * Everything the companion's two places on a page (the panel on a reading, the picture ideas on an item) share: what has been asked and
  * answered, the answers the person kept, a fixed reply that came straight back, and the buttons' actions. Polls while a request waits.
  */
-export function useCompanionJobs(subject: Subject, enabled: boolean, wantCaps = false) {
+export function useCompanionJobs(subject: Subject, wanted: boolean, wantCaps = false) {
+  // Nothing is asked of a companion this copy cannot reach (lib/ai-ready-core.ts).
+  const enabled = wanted && useAiReady().companion;
   const [listing, setListing] = useState<Listing>({ jobs: [], notes: [], mode: "queue", studio: null });
   const [caps, setCaps] = useState<Caps | null>(null);
   const [immediate, setImmediate] = useState<Immediate | null>(null);

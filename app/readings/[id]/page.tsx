@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState, useEffect, use, useId } from "react";
 import { parseDate, toISOString } from "@/lib/date";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,7 @@ interface Reading {
 export default function ReadingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const ai = useAiReady();
   const uid = useId();
   const [reading, setReading] = useState<Reading | null>(null);
   const [missing, setMissing] = useState<"none" | "failed" | null>(null);
@@ -598,8 +599,8 @@ export default function ReadingDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
 
-            {/* Guide section (Claude), not in the Feathered edition */}
-            {!FEATHERED && (
+            {/* Guide section (Claude): only with a Claude key that works, never in Feathered */}
+            {ai.claude && (
             <div className="bg-surface-sunken border border-tone-900/30 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs text-tone-400/80 uppercase tracking-widest"><SigilMark /> Your Guide</p>

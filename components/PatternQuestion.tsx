@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState } from "react";
 import { buttonClass } from "@/components/ui/Button";
 import { ErrorNote } from "@/components/ui/Page";
@@ -128,5 +128,6 @@ function PatternQuestionInner({ pattern, name, jobs }: { pattern: string; name: 
 
 /** Not in the Feathered edition, which has no AI (docs/plan-feathered-edition.md). */
 export default function PatternQuestion(props: { pattern: string; name: string; jobs: Jobs }) {
-  return FEATHERED ? null : <PatternQuestionInner {...props} />;
+  // Left out when this copy cannot run it (no companion model; always in Feathered): lib/ai-ready-core.ts.
+  return useAiReady().companion ? <PatternQuestionInner {...props} /> : null;
 }

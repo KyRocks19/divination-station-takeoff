@@ -1,4 +1,4 @@
-import { FEATHERED } from "@/lib/edition";
+import { aiReadyFor } from "@/lib/ai-ready";
 import Link from "next/link";
 import AddToDay from "@/components/AddToDay";
 import { query } from "@/lib/db";
@@ -22,6 +22,7 @@ export default async function JournalsPage({
 
   // The page starts with the tools the person chose. "Show everything" widens this one page; the saved choice stays.
   const prefs = session.userId ? await getPrefs(session.userId) : DEFAULT_PREFS;
+  const ai = await aiReadyFor(session.userId);
   const widened = isWidened(sp);
   const shown = widened ? null : prefs.tools;
 
@@ -65,8 +66,8 @@ export default async function JournalsPage({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <PageTitle>Journals</PageTitle>
-          {/* A new entry here is written with Claude, so the Feathered edition leaves the link out. */}
-          {!FEATHERED && (
+          {/* A new entry here is written with Claude, so the link is left out without a Claude key that works (and always in Feathered). */}
+          {ai.claude && (
             <Link
               href="/journals/new"
               className="text-xs bg-tone-800/60 hover:bg-tone-700/60 text-tone-200 font-medium px-4 py-2 min-h-11 sm:min-h-0 rounded-lg transition-colors"

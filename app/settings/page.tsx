@@ -1,6 +1,7 @@
 "use client";
 
 import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState, useEffect } from "react";
 import SigilCanvas from "@/components/SigilCanvas";
 import DaysFolder from "@/components/DaysFolder";
@@ -53,6 +54,8 @@ export default function SettingsPage() {
 
   // Display preferences
   const prefs = usePrefs();
+  // Each AI setting is shown only when this copy can run that feature (lib/ai-ready-core.ts).
+  const ai = useAiReady();
   const [revealWait, setRevealWait] = useRevealWait();
   // Which card the last change was made in, so "Saved" shows there.
   const [prefsMsg, setPrefsMsg] = useState<{ type: "ok" | "err"; text: string; where: "guide" | "companion" } | null>(null);
@@ -260,8 +263,8 @@ export default function SettingsPage() {
                     <span className="text-sm text-ink-soft">Write what I sense before I read the meanings</span>
                     <span className="block text-xs text-ink-muted mt-0.5">
                       Each reading first asks what you sense, and keeps its meanings closed until you have written it or skipped.
-                      Your words are sealed when saved, so you can later say how well they fitted. Nothing is graded, and the
-                      companion never sees these words. Turn this off to see meanings straight away.
+                      Your words are sealed when saved, so you can later say how well they fitted. Nothing is graded{ai.companion ? ", and the companion never sees these words" : ""}.
+                      Turn this off to see meanings straight away.
                     </span>
                   </span>
                 </label>
@@ -298,7 +301,7 @@ export default function SettingsPage() {
                   </span>
                 </label>
 
-                {!FEATHERED && (
+                {ai.pictures && (
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -321,7 +324,7 @@ export default function SettingsPage() {
               </div>
             </Item>
 
-            {!FEATHERED && (
+            {ai.companion && (
             <Item id="companion" label="AI companion">
               <div className="bg-surface border border-line rounded-card p-5 space-y-3">
                 <h3 className="font-semibold text-ink-strong">AI Companion</h3>
@@ -554,7 +557,9 @@ export default function SettingsPage() {
                     your own meanings and their earlier versions (cards, oracle decks, runes, ogham, dice, pendulum, hexagrams, geomantic figures),
                     {FEATHERED
                       ? "concept notes, layouts, tags and your colours."
-                      : "concept notes, layouts, tags, your colours, and your circle (its members' names, what you agreed to, and your own Claude request counts; never a key or a code)."}
+                      : ai.claude
+                        ? "concept notes, layouts, tags, your colours, and your circle (its members' names, what you agreed to, and your own Claude request counts; never a key or a code)."
+                        : "concept notes, layouts, tags, your colours, and your circle (its members' names and what you agreed to; never a key or a code)."}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">

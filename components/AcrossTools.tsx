@@ -8,6 +8,7 @@ import type { Recurring, Shift, Tally, MonthThemes, WhenCounts } from "@/lib/pat
 import type { OwnMonthThemes } from "@/lib/own-tallies-core";
 import { NOTE_WORD_MIN_NOTES, type NoteWord } from "@/lib/note-words-core";
 import { usePrefs } from "@/components/usePrefs";
+import { useAiReady } from "@/components/AiReady";
 import { useCompanionJobs } from "@/components/useCompanionJobs";
 import PatternQuestion from "@/components/PatternQuestion";
 import { patternRef } from "@/lib/companion-pattern-ref";
@@ -77,6 +78,7 @@ export default function AcrossTools({ shown }: { shown: DivinationKind[] | null 
   const key = shown ? shown.join(",") : "";
   // One shared connection to the companion for every pattern on the page (the buttons only show when the companion is switched on).
   const prefs = usePrefs();
+  const ai = useAiReady();
   const pq = useCompanionJobs({ patterns: true }, prefs.companionEnabled);
 
   useEffect(() => {
@@ -112,7 +114,7 @@ export default function AcrossTools({ shown }: { shown: DivinationKind[] | null 
       </div>
     );
   }
-  const ask = prefs.companionEnabled && !example;
+  const ask = ai.companion && prefs.companionEnabled && !example;
 
   return (
     <div className="space-y-8">
@@ -345,7 +347,7 @@ export default function AcrossTools({ shown }: { shown: DivinationKind[] | null 
         </Section>
       )}
 
-      {!prefs.companionEnabled && !example && (
+      {ai.companion && !prefs.companionEnabled && !example && (
         <p className="text-xs text-ink-ghost">
           You can turn on an AI companion in <Link href="/settings" className="underline">Settings</Link> to be asked a question about any pattern above. It is off until you do.
         </p>

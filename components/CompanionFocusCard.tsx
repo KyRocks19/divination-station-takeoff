@@ -1,6 +1,6 @@
 "use client";
 
-import { FEATHERED } from "@/lib/edition";
+import { useAiReady } from "@/components/AiReady";
 import { useState } from "react";
 import { savePrefs, usePrefs } from "@/components/usePrefs";
 import { Button } from "@/components/ui/Button";
@@ -50,5 +50,6 @@ function CompanionFocusCardInner({ readingCount }: { readingCount: number }) {
 
 /** Not in the Feathered edition, which has no AI (docs/plan-feathered-edition.md). */
 export default function CompanionFocusCard(props: { readingCount: number }) {
-  return FEATHERED ? null : <CompanionFocusCardInner {...props} />;
+  // Left out when this copy cannot run it (no companion model; always in Feathered): lib/ai-ready-core.ts.
+  return useAiReady().companion ? <CompanionFocusCardInner {...props} /> : null;
 }

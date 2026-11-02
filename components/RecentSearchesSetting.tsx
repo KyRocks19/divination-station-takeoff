@@ -3,6 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { useAiReady } from "@/components/AiReady";
 import { MAX_RECENT, NO_RECENT, type RecentState } from "@/lib/recent-searches-core";
 
 /**
@@ -12,6 +13,7 @@ import { MAX_RECENT, NO_RECENT, type RecentState } from "@/lib/recent-searches-c
  */
 export default function RecentSearchesSetting() {
   const uid = useId();
+  const claude = useAiReady().claude;
   const [state, setState] = useState<RecentState | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -43,7 +45,7 @@ export default function RecentSearchesSetting() {
         <h3 id={`${uid}-h`} className="font-semibold text-ink-strong">Recent searches</h3>
         <p className="text-xs text-ink-faint mt-0.5">
           The search window can remember the words of the searches you opened a result from (the latest {MAX_RECENT}), so you can run one again. They are kept
-          in your account, shown only to you, not sent to Claude, and they are in your export. They are off until you turn them on.
+          in your account, shown only to you,{claude ? " not sent to Claude," : ""} and they are in your export. They are off until you turn them on.
         </p>
       </div>
       <label className="flex items-center gap-2 text-sm text-ink cursor-pointer">

@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import { usePrefs } from "@/components/usePrefs";
+import { useAiReady } from "@/components/AiReady";
 import { useCompanionJobs } from "@/components/useCompanionJobs";
 import { buttonClass } from "@/components/ui/Button";
 import { ErrorNote } from "@/components/ui/Page";
@@ -21,9 +22,10 @@ export function parseIdeas(text: string): string[] {
  */
 export default function SceneIdeas({ cardId, onUse }: { cardId: number; onUse: (text: string) => void }) {
   const prefs = usePrefs();
+  const ai = useAiReady();
   const uid = useId();
   const c = useCompanionJobs({ cardId }, prefs.companionEnabled);
-  if (!prefs.companionEnabled) return null;
+  if (!prefs.companionEnabled || !ai.companion) return null;
   const name = prefs.companionName;
   const asleep = c.listing.mode === "queue" && c.listing.studio && !c.listing.studio.awake;
 
