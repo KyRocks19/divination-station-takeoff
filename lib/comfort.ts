@@ -1,5 +1,6 @@
 // "Reading comfort": the type and motion choices a person can make for themselves on this device (text size, spacing,
-// a more readable font, less motion, whether the header bar stays at the top). This file is plain data and plain functions with no browser or database code, so
+// a more readable font, less motion) and the layout choices kept with them (whether the header bar stays at the top, whether
+// the side menu lies over the page or pushes it over). This file is plain data and plain functions with no browser or database code, so
 // it can be tested and imported anywhere. The choices live in the browser's own storage, not in the account, so they apply
 // on the sign-in page too and need no migration; app/layout.tsx puts them on <html> before the first paint.
 
@@ -11,6 +12,9 @@ export type ComfortSpacing = "normal" | "roomy";
 export type ComfortMotion = "system" | "less";
 /** Whether the header bar stays at the top while the page scrolls ("sticky", the standard) or scrolls away with the page. */
 export type ComfortHeader = "sticky" | "scrolls";
+/** Whether the full side menu lies over the left of the page ("overlay", the standard since 2026-10-26) or pushes the page
+ *  over to make room for itself ("push", as it did before). */
+export type ComfortSidebar = "overlay" | "push";
 
 export interface Comfort {
   font: ComfortFont;
@@ -18,9 +22,13 @@ export interface Comfort {
   spacing: ComfortSpacing;
   motion: ComfortMotion;
   header: ComfortHeader;
+  sidebar: ComfortSidebar;
 }
 
-export const DEFAULT_COMFORT: Comfort = { font: "system", size: 100, spacing: "normal", motion: "system", header: "sticky" };
+export const DEFAULT_COMFORT: Comfort = { font: "system", size: 100, spacing: "normal", motion: "system", header: "sticky", sidebar: "overlay" };
+
+/** The choices shown under "Layout" in Settings; the rest are shown under "Reading comfort". Both are kept together. */
+export const LAYOUT_FIELDS = ["header", "sidebar"] as const satisfies readonly (keyof Comfort)[];
 
 export const FONT_CHOICES: { id: ComfortFont; label: string; note: string; family: string }[] = [
   { id: "system", label: "My device's own font", note: "What the app used before. It is the font you already read everything else in.", family: "system-ui, sans-serif" },
@@ -71,6 +79,7 @@ export function parseComfort(raw: string | null | undefined): Comfort {
     spacing: d.spacing === "roomy" ? "roomy" : "normal",
     motion: d.motion === "less" ? "less" : "system",
     header: d.header === "scrolls" ? "scrolls" : "sticky",
+    sidebar: d.sidebar === "push" ? "push" : "overlay",
   };
 }
 
@@ -82,15 +91,16 @@ export function comfortAttributes(c: Comfort): Record<string, string> {
   if (c.spacing === "roomy") a["data-spacing"] = "roomy";
   if (c.motion === "less") a["data-motion"] = "less";
   if (c.header === "scrolls") a["data-header"] = "scrolls";
+  if (c.sidebar === "push") a["data-sidebar"] = "push";
   return a;
 }
 
 /** Every attribute this feature can set, so a change can clear the old ones first. */
-export const COMFORT_ATTRIBUTES = ["data-font", "data-size", "data-spacing", "data-motion", "data-header"] as const;
+export const COMFORT_ATTRIBUTES = ["data-font", "data-size", "data-spacing", "data-motion", "data-header", "data-sidebar"] as const;
 
 /**
  * Runs in the page's <head> before anything is drawn, so there is no flash of the wrong font. It repeats the rules of
  * parseComfort and comfortAttributes in a few lines (a test runs both and checks they agree). Storage can throw in a
  * private window; then the page is simply the standard one.
  */
-export const COMFORT_BOOT_SCRIPT = `(function(){try{var c=JSON.parse(localStorage.getItem(${JSON.stringify(COMFORT_KEY)})||"null");if(!c||typeof c!=="object")return;var d=document.documentElement;if(["atkinson","lexend","opendyslexic"].indexOf(c.font)>-1)d.setAttribute("data-font",c.font);if([115,130,150].indexOf(c.size)>-1)d.setAttribute("data-size",String(c.size));if(c.spacing==="roomy")d.setAttribute("data-spacing","roomy");if(c.motion==="less")d.setAttribute("data-motion","less");if(c.header==="scrolls")d.setAttribute("data-header","scrolls");}catch(e){}})();`;
+export const COMFORT_BOOT_SCRIPT = `(function(){try{var c=JSON.parse(localStorage.getItem(${JSON.stringify(COMFORT_KEY)})||"null");if(!c||typeof c!=="object")return;var d=document.documentElement;if(["atkinson","lexend","opendyslexic"].indexOf(c.font)>-1)d.setAttribute("data-font",c.font);if([115,130,150].indexOf(c.size)>-1)d.setAttribute("data-size",String(c.size));if(c.spacing==="roomy")d.setAttribute("data-spacing","roomy");if(c.motion==="less")d.setAttribute("data-motion","less");if(c.header==="scrolls")d.setAttribute("data-header","scrolls");if(c.sidebar==="push")d.setAttribute("data-sidebar","push");}catch(e){}})();`;

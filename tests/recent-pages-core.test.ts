@@ -83,6 +83,12 @@ test("the narrow rules only apply from the width where the column shows, and out
 test("the full menu floats over the page, keeping only the narrow menu's width in the row", () => {
   const css = readFileSync("app/globals.css", "utf8");
   // 14rem wide (w-56) less 10.5rem leaves the narrow column's 3.5rem, so the page does not move when the menu is widened.
-  assert.match(css, /@media \(min-width: 64rem\) \{\s*html:not\(\[data-nav="narrow"\]\) \.sidenav \{\s*margin-right: -10\.5rem;\s*z-index: 40;/);
+  assert.match(css, /@media \(min-width: 64rem\) \{\s*html:not\(\[data-nav="narrow"\]\):not\(\[data-sidebar="push"\]\) \.sidenav \{\s*margin-right: -10\.5rem;\s*z-index: 40;/);
   assert.match(readFileSync("components/SideNav.tsx", "utf8"), /\bw-56\b/);
+});
+
+test("a person who chose the pushing side menu (Settings, Layout) gets its full width in the row", () => {
+  // The overlay rule above is skipped under data-sidebar="push", so w-56 stands and the page moves over.
+  assert.match(readFileSync("lib/comfort.ts", "utf8"), /data-sidebar/);
+  assert.doesNotMatch(readFileSync("app/globals.css", "utf8"), /html\[data-sidebar="push"\] \.sidenav \{[^}]*margin-right: -/);
 });

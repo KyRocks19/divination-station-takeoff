@@ -203,6 +203,8 @@ export interface ReadingIn {
   clarifiers: Record<number, DrawnCardIn[]>;
   tags: string[];
   journals: JournalIn[];
+  /** Drawn with the person's own deck and recorded (migration 106). */
+  own_draw: boolean;
 }
 
 export interface JournalIn {
@@ -254,6 +256,7 @@ export function cleanReading(raw: unknown): ReadingIn | null {
     // A tag is the same tag whatever its capitals, as in the rest of the app.
     tags: tags.filter((t, i) => tags.findIndex((u) => u.toLowerCase() === t.toLowerCase()) === i),
     journals,
+    own_draw: r.own_draw === true,
   };
 }
 

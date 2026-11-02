@@ -13,7 +13,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CompanionExplanation } from "@/components/CompanionPanel";
 import CompanionFocusForm from "@/components/CompanionFocusForm";
 import CompanionNoticed from "@/components/CompanionNoticed";
-import ComfortSettings from "@/components/ComfortSettings";
+import ComfortSettings, { LayoutSettings } from "@/components/ComfortSettings";
 import { SensitiveMeaningsSetting } from "@/components/SensitiveMeanings";
 import AdultSetting from "@/components/AdultSetting";
 import PasskeySettings from "@/components/PasskeySettings";
@@ -158,20 +158,27 @@ export default function SettingsPage() {
 
         <div id="settings-sections" className="space-y-12 min-w-0">
           <Section id="look" title="Look and comfort">
-            <Item id="comfort" label="Reading comfort and header bar">
+            <Item id="comfort" label="Reading comfort">
               <ComfortSettings />
             </Item>
 
-            <Item id="colours" label="Colours">
-              <div className="bg-surface border border-line rounded-card p-5 space-y-3">
-                <h3 className="font-semibold text-ink-strong">Colours</h3>
-                <p className="text-sm text-ink-muted leading-relaxed">
-                  Make the app look the way you feel at home in it. Start from one of seven themes or choose any colour yourself. It is
-                  saved with your profile and follows you to every device.
-                </p>
-                <ButtonLink href="/design" variant="primary">Choose your colours</ButtonLink>
-              </div>
-            </Item>
+            {/* The right-hand column: Colours, then Layout under it, so Layout does not wait below the long comfort card. */}
+            <div className="space-y-6 min-w-0">
+              <Item id="colours" label="Colours">
+                <div className="bg-surface border border-line rounded-card p-5 space-y-3">
+                  <h3 className="font-semibold text-ink-strong">Colours</h3>
+                  <p className="text-sm text-ink-muted leading-relaxed">
+                    Make the app look the way you feel at home in it. Start from one of seven themes or choose any colour yourself. It is
+                    saved with your profile and follows you to every device.
+                  </p>
+                  <ButtonLink href="/design" variant="primary">Choose your colours</ButtonLink>
+                </div>
+              </Item>
+
+              <Item id="layout" label="Layout">
+                <LayoutSettings />
+              </Item>
+            </div>
           </Section>
 
           <Section id="guidance" title="Readings and guidance">

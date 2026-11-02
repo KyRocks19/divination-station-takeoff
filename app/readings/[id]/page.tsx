@@ -42,6 +42,8 @@ interface Reading {
   divination_id?: number | null;
   sky?: Sky & { recorded?: boolean };
   journals: Journal[];
+  /** The person drew these cards with their own deck and entered them (migration 106): it opens at once, nothing is held back. */
+  own_draw?: boolean;
 }
 
 export default function ReadingDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -50,7 +52,10 @@ export default function ReadingDetailPage({ params }: { params: Promise<{ id: st
   const uid = useId();
   const [reading, setReading] = useState<Reading | null>(null);
   const [missing, setMissing] = useState<"none" | "failed" | null>(null);
-  const guess = useGuess(reading?.divination_id);
+  // A reading recorded from the person's own deck has no "write what you sense first" step: the cards were already seen.
+  const ownDraw = reading?.own_draw === true;
+  const guessId = ownDraw ? null : reading?.divination_id;
+  const guess = useGuess(guessId);
   const [newNote, setNewNote] = useState("");
   const [savingNote, setSavingNote] = useState(false);
   const [lookback, setLookback] = useState("");
@@ -388,9 +393,13 @@ export default function ReadingDetailPage({ params }: { params: Promise<{ id: st
         >
           <h2 className="hidden md:block text-xs text-ink-muted uppercase tracking-widest mb-3">Reading Spread</h2>
 
-          <GuessFirst divinationId={reading.divination_id} />
+          {ownDraw ? (
+            <p className="text-xs text-ink-faint">You drew these cards with your own deck and recorded them here.</p>
+          ) : (
+            <GuessFirst divinationId={reading.divination_id} />
+          )}
 
-          <Reveal divinationId={reading.divination_id} question={reading.question} readingKey={`t${reading.id}`} createdAt={reading.created_at} spec={revealSpec("tarot")}>
+          <Reveal divinationId={guessId} question={reading.question} readingKey={`t${reading.id}`} createdAt={reading.created_at} spec={revealSpec("tarot")} ownDraw={ownDraw}>
             <section aria-label="Spread layout" className="-mx-4 md:mx-0 px-4 md:px-0">
               <SpreadLayout
                 cards={reading.cards}

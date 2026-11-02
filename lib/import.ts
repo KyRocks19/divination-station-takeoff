@@ -1,3 +1,4 @@
+import { markOwnDraw } from "./own-draw";
 import type { PoolClient } from "pg";
 import { withTransaction } from "./db";
 import { tarotSummary } from "./divinations";
@@ -155,6 +156,8 @@ async function importReadings(client: PoolClient, userId: number, data: Row, tag
     client, "divinations", ["id", "user_id", "kind", "title", "question", "summary", "sky", "reading_id", "created_at"],
     fresh.map((r, i) => [divIds[i], userId, "tarot", r.title, r.question, tarotSummary(r.cards), r.sky, ids[i], r.created_at])
   );
+  // Readings drawn with the person's own deck keep that mark, so they still open without a wait or a lock.
+  await markOwnDraw(client, fresh.flatMap((r, i) => (r.own_draw ? [ids[i]] : [])));
   // Which tag goes on which reading.
   await insertMany(
     client, "reading_tags", ["reading_id", "tag_id"],

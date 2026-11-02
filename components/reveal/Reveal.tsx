@@ -26,6 +26,9 @@ interface Props {
   question?: string | null;
   /** A few words to bring to mind while it opens, such as a tea's concepts. */
   focus?: string[];
+  /** The person drew this with their own deck, coins or stones and recorded it here: they have seen the result, so it opens at once,
+   *  with no animation, no wait and nothing covered (lib/own-draw.ts). */
+  ownDraw?: boolean;
   children: React.ReactNode;
 }
 
@@ -65,7 +68,7 @@ function markSeen(key: string) {
  * result stays covered until the person has sealed their first impression or skipped that step. An older reading opened again skips the
  * animation. "I am ready" and Escape end the wait early.
  */
-export default function Reveal({ divinationId, readingKey, createdAt, spec, tea = null, question = null, focus = [], children }: Props) {
+export default function Reveal({ divinationId, readingKey, createdAt, spec, tea = null, question = null, focus = [], ownDraw = false, children }: Props) {
   const { state, held } = useGuess(divinationId);
   // The one wait's length is the person's choice in Settings (30 seconds to five minutes), read before the opening starts.
   const [waitSeconds] = useRevealWait();
@@ -79,10 +82,11 @@ export default function Reveal({ divinationId, readingKey, createdAt, spec, tea 
     if (!ready) return;
     setPhase((p) => {
       if (p !== "waiting") return p;
+      if (ownDraw) return "shown";
       if (shouldAnimate({ held, createdAt, now: Date.now(), seen: seenBefore(readingKey) })) return "opening";
       return held ? "covered" : "shown";
     });
-  }, [ready, held, createdAt, readingKey]);
+  }, [ready, held, createdAt, readingKey, ownDraw]);
 
   // A covered reading opens as soon as the first impression is sealed or the step is skipped.
   useEffect(() => {
