@@ -41,6 +41,9 @@ if (-not $SkipBuild) {
   }
 }
 
+# A copy that keeps its data in a folder (DS_DB_DIR in .env.local, docs/move-off-neon.md) closes the database itself when it is stopped:
+# NEXT_MANUAL_SIG_HANDLE leaves Ctrl+C to its handler (instrumentation-node.ts) instead of Next.js exiting at once.
+if ((Test-Path '.env.local') -and (Select-String -Path '.env.local' -Pattern '^\s*DS_DB_DIR\s*=\s*\S' -Quiet)) { $env:NEXT_MANUAL_SIG_HANDLE = '1' }
 Say 'Starting the server (npm start) on http://127.0.0.1:3000 ...'
 & npm.cmd start 2>&1 | Out-File -Append -Encoding utf8 $log
 Say "The server stopped (exit code $LASTEXITCODE)."

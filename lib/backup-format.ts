@@ -103,3 +103,9 @@ export interface BackupHeader {
   migrations: string[];
   tables: { name: string; rows: number }[];
 }
+
+/** Migrations the backup's database has had that this copy's migrations folder does not have: the data is newer than this copy of the app. */
+export function newerThanThisCopy(backupMigrations: string[], localMigrations: string[]): string[] {
+  const have = new Set(localMigrations);
+  return backupMigrations.filter((m) => !have.has(m)).sort();
+}
