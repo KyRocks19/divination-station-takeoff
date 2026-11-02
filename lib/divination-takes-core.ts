@@ -1,7 +1,7 @@
 // Takes on divination: the one-liners under the home page title (owner's request, 2026-10-26). Pure, so the browser and the
 // tests can use it. Each is one view of what divination is, labelled with the kind of view it is, so no single one is the
 // app's own claim: some are playful, some are a believer's, some are a skeptic's, some are plain. A person can keep the
-// ones they like and write their own (migration 098, lib/divination-takes.ts). Both are shown on the Divination archetype
+// ones they like, hide the ones they do not want to see again (migration 105), and write their own (migration 098, lib/divination-takes.ts). Both are shown on the Divination archetype
 // page as part of their own meaning for it, and their own takes come round on the home page among the others.
 //
 // Rules for a new take: write it fresh (no quotations, which would need a source); a believer's take is a view, never a
@@ -162,6 +162,8 @@ export function homeOrder(seed: number, stockCount: number = TAKES.length, ownCo
   const stock = takeOrder(seed, stockCount);
   if (ownCount === 0) return stock.map((i) => ({ own: false, i }));
   const own = takeOrder(seed + 1, ownCount);
+  // The person hid every one of the app's takes: their own are all that is left.
+  if (stockCount === 0) return own.map((i) => ({ own: true, i }));
   const offset = Math.abs(Math.floor(seed)) % 3;
   const out: TakeSlot[] = [];
   let a = 0;
@@ -170,6 +172,48 @@ export function homeOrder(seed: number, stockCount: number = TAKES.length, ownCo
     if ((n + offset) % 3 === 0) out.push({ own: true, i: own[b++ % own.length] });
     else out.push({ own: false, i: stock[a++] });
   }
+  return out;
+}
+
+// ---------------------------------------------------------------- takes the person hid (migration 105)
+
+/** The app's takes this person has not hidden, in list order. The home page draws only from these. */
+export function visibleTakes(hidden: Iterable<string>): DivinationTake[] {
+  const out = new Set(hidden);
+  return TAKES.filter((t) => !out.has(t.id));
+}
+
+/**
+ * The place after `at` in the order whose take is not hidden, wrapping round; -1 when every place is hidden. Used by the home
+ * page after a take is hidden there, so the next press never lands on one the person has just hidden.
+ */
+export function nextVisibleIndex<T>(order: readonly T[], at: number, isHidden: (slot: T) => boolean): number {
+  for (let step = 1; step <= order.length; step++) {
+    const i = (at + step) % order.length;
+    if (!isHidden(order[i])) return i;
+  }
+  return -1;
+}
+
+/** What the data export holds about hidden takes: the words of each, so the file reads well without the app. */
+export interface HiddenTakesExport {
+  hidden_divination_takes: { text: string; kind: string; hidden_on: string }[];
+}
+
+export function shapeHiddenTakesExport(rows: { take_id: string; created_at: string }[]): HiddenTakesExport {
+  const out: HiddenTakesExport["hidden_divination_takes"] = [];
+  for (const r of rows) {
+    const take = takeById(r.take_id);
+    if (take) out.push({ text: take.text, kind: TONE_LABELS[take.tone], hidden_on: new Date(r.created_at).toISOString().slice(0, 10) });
+  }
+  return { hidden_divination_takes: out };
+}
+
+/** Markdown lines for the readable export; nothing when the person hid none. */
+export function hiddenTakesMarkdown(data: HiddenTakesExport): string[] {
+  if (data.hidden_divination_takes.length === 0) return [];
+  const out = ["", "## Takes on divination you hid", ""];
+  for (const h of data.hidden_divination_takes) out.push(`- ${h.text} (${h.kind}, hidden ${h.hidden_on})`);
   return out;
 }
 

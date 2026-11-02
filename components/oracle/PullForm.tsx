@@ -1,15 +1,14 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import LayoutPicker, { type LayoutChoice } from "@/components/LayoutPicker";
-import ShuffleOverlay, { shuffleWait } from "@/components/ShuffleOverlay";
+import ShuffleOverlay from "@/components/ShuffleOverlay";
 import { wantsLessMotion } from "@/lib/less-motion";
 import PutBack from "@/components/oracle/PutBack";
 import { formWords, type SetForm } from "@/lib/oracle-forms";
 import { MAX_DRAW_LOTS, cleanLotCount } from "@/lib/lots-core";
 
-/** How long the shuffle moment lasts at least, in milliseconds. The pull itself is made while it plays. */
 
 interface Props {
   deckId: number;
@@ -37,7 +36,6 @@ export default function PullForm({ deckId, hints, layouts, waking, form, resting
   const [layout, setLayout] = useState<LayoutChoice | null>(null);
   const [pulling, setPulling] = useState(false);
   const [shuffling, setShuffling] = useState(false);
-  const skipShuffle = useRef<() => void>(() => {});
   const [error, setError] = useState<string | null>(null);
 
   // With a layout the layout decides how many; without one the person can take several at once.
@@ -55,24 +53,20 @@ export default function PullForm({ deckId, hints, layouts, waking, form, resting
       setShuffling(true);
       if ("vibrate" in navigator) navigator.vibrate([40, 25, 40, 25, 40, 25, 100]);
     }
-    const wait = shuffleWait(calm);
-    skipShuffle.current = wait.skip;
     try {
-      // The pull is made while the shuffle plays; the page moves on when both are done ("I am ready" ends the shuffle early).
-      const [res] = await Promise.all([
-        fetch("/api/oracle/pulls", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            deck_id: deckId,
-            question,
-            ...(layout ? { layoutId: layout.id } : { count: countNumber }),
-            ...(setAside ? { setAside: true } : {}),
-            tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          }),
+      // No wait here: the shuffle shows while the pull is made, then the pull's opening carries on with it for the length the person
+      // chose in Settings (holding the question and shuffling are one step, 2026-11-01).
+      const res = await fetch("/api/oracle/pulls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deck_id: deckId,
+          question,
+          ...(layout ? { layoutId: layout.id } : { count: countNumber }),
+          ...(setAside ? { setAside: true } : {}),
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
-        wait.done,
-      ]);
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         throw new Error(typeof body?.error === "string" ? body.error : "");
@@ -88,7 +82,7 @@ export default function PullForm({ deckId, hints, layouts, waking, form, resting
 
   return (
     <form onSubmit={pull} className="bg-surface border border-line rounded-card p-5 space-y-4">
-      {shuffling && <ShuffleOverlay count={layout ? layout.positions.length : countNumber ?? 1} group={w.group} one={w.one} many={w.many} onSkip={() => skipShuffle.current()} />}
+      {shuffling && <ShuffleOverlay count={layout ? layout.positions.length : countNumber ?? 1} group={w.group} one={w.one} many={w.many} question={question} />}
       <div>
         <label htmlFor={questionId} className="block text-xs text-ink-faint mb-1">
           Your question or intention (optional)

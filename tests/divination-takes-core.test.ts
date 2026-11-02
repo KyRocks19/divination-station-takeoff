@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
   DIVINATION_SLUG, OWN_TAKE_MAX_LENGTH, TAKES, TONE_LABELS, TONE_ORDER, cleanOwnTake, homeOrder, isTakeId, keptMarkdown, nextTakeIndex,
-  ownMarkdownLines, shapeKeptExport, shapeOwnExport, takeById, takeOrder,
+  ownMarkdownLines, shapeKeptExport, shapeOwnExport, takeById, takeOrder, visibleTakes, nextVisibleIndex, shapeHiddenTakesExport,
+  hiddenTakesMarkdown,
 } from "../lib/divination-takes-core";
 import { getArchetype } from "../lib/archetypes-data";
 
@@ -98,4 +99,58 @@ test("the export holds the person's own takes in their words", () => {
   assert.deepEqual(data, { own_divination_takes: [{ text: "A pause with pictures.", written_on: "2026-10-26" }] });
   assert.deepEqual(ownMarkdownLines(data), ["", "## Your own takes on divination", "", "- A pause with pictures. (written 2026-10-26)"]);
   assert.deepEqual(ownMarkdownLines({ own_divination_takes: [] }), []);
+});
+
+// ---------------------------------------------------------------- hidden takes (migration 105)
+
+test("hidden takes are left out of the home page's pool, and unknown ids change nothing", () => {
+  const hide = [TAKES[0].id, TAKES[5].id, "gone-take"];
+  const left = visibleTakes(hide);
+  assert.equal(left.length, TAKES.length - 2);
+  assert.ok(!left.some((t) => t.id === TAKES[0].id || t.id === TAKES[5].id));
+  assert.deepEqual(visibleTakes([]), [...TAKES]);
+  assert.deepEqual(visibleTakes(TAKES.map((t) => t.id)), []);
+});
+
+test("with every app take hidden, the home page shows only the person's own; with nothing at all, nothing", () => {
+  const order = homeOrder(7, 0, 3);
+  assert.equal(order.length, 3);
+  assert.ok(order.every((s) => s.own));
+  assert.deepEqual([...order.map((s) => s.i)].sort(), [0, 1, 2]);
+  assert.deepEqual(homeOrder(7, 0, 0), []);
+});
+
+test("after a hide, the next place skips every hidden one and wraps round; -1 when all are hidden", () => {
+  const order = ["a", "b", "c", "d"];
+  assert.equal(nextVisibleIndex(order, 0, (x) => x === "b"), 2);
+  assert.equal(nextVisibleIndex(order, 2, (x) => x === "d" || x === "a"), 1);
+  assert.equal(nextVisibleIndex(order, 1, (x) => x !== "b"), 1, "the only one left is the one it is on");
+  assert.equal(nextVisibleIndex(order, 1, () => true), -1);
+  assert.equal(nextVisibleIndex([], 0, () => false), -1);
+});
+
+test("hidden takes are exported with their words, and old ids are left out", () => {
+  const data = shapeHiddenTakesExport([
+    { take_id: "playful-overthinking", created_at: "2026-11-01T12:00:00Z" },
+    { take_id: "gone-take", created_at: "2026-10-25T12:00:00Z" },
+  ]);
+  assert.deepEqual(data.hidden_divination_takes, [{ text: "Overthinking, but with props.", kind: "Tongue in cheek", hidden_on: "2026-11-01" }]);
+  assert.deepEqual(hiddenTakesMarkdown(data), ["", "## Takes on divination you hid", "", "- Overthinking, but with props. (Tongue in cheek, hidden 2026-11-01)"]);
+  assert.deepEqual(hiddenTakesMarkdown({ hidden_divination_takes: [] }), []);
+  assert.match(readFileSync("app/api/export/route.ts", "utf8"), /\.\.\.ownTakes,\s+\.\.\.hiddenTakes/);
+});
+
+test("hidden takes are deleted with the account, and work before migration 105", () => {
+  const sql = readFileSync("migrations/105_hidden_divination_takes.sql", "utf8");
+  assert.match(sql, /REFERENCES users\(id\) ON DELETE CASCADE/);
+  assert.match(sql, /^-- older-versions: ok$/m);
+  const lib = readFileSync("lib/divination-takes.ts", "utf8");
+  for (const fn of ["hiddenTakeIds", "setTakeHidden", "hiddenTakesForExport"]) {
+    const body = lib.slice(lib.indexOf(`export async function ${fn}`));
+    assert.match(body.slice(0, body.indexOf("\n}\n")), /notThereYet\(err\)/, `${fn} treats a missing table as not there yet`);
+  }
+  // Keeping a hidden take shows it again, and hiding a kept take lets go of it, so a take is never both.
+  assert.match(lib, /DELETE FROM user_hidden_divination_takes WHERE user_id = \$1 AND take_id = \$2/);
+  const hideBody = lib.slice(lib.indexOf("export async function setTakeHidden"));
+  assert.match(hideBody, /DELETE FROM user_divination_takes WHERE user_id = \$1 AND take_id = \$2/);
 });

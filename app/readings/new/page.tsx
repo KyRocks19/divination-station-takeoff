@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense, useId } from "react";
+import { useState, useEffect, Suspense, useId } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { TAROT_DECK } from "@/lib/cards";
 import CardDisplay from "@/components/CardDisplay";
-import ShuffleOverlay, { shuffleWait } from "@/components/ShuffleOverlay";
+import ShuffleOverlay from "@/components/ShuffleOverlay";
 import { usePrefs } from "@/components/usePrefs";
 import { PageTitle } from "@/components/ui/Page";
 import { SigilMark } from "@/components/ui/AppSigil";
@@ -43,7 +43,6 @@ function NewReadingForm() {
   const [drawnCards, setDrawnCards] = useState<DrawnCard[]>([]);
   const [saving, setSaving] = useState(false);
   const [shuffling, setShuffling] = useState(false);
-  const skipShuffle = useRef<() => void>(() => {});
   const [step, setStep] = useState<"setup" | "cards">("setup");
 
   useEffect(() => {
@@ -74,17 +73,13 @@ function NewReadingForm() {
       navigator.vibrate([40, 25, 40, 25, 40, 25, 40, 25, 40, 25, 100]);
     }
 
-    // Run the draw fetch alongside a minimum animation timer in parallel ("I am ready" ends the timer early)
-    const wait = shuffleWait(calm);
-    skipShuffle.current = wait.skip;
-    const [drawData] = await Promise.all([
-      fetch("/api/draw", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: activePositions.length }),
-      }).then((r) => r.json()),
-      wait.done,
-    ]);
+    // No wait here: the shuffle shows while the draw is made and saved, then the reading's opening carries on with it for the length
+    // the person chose in Settings (holding the question and shuffling are one step, 2026-11-01).
+    const drawData = await fetch("/api/draw", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ count: activePositions.length }),
+    }).then((r) => r.json());
 
     const drawn: DrawnCard[] = activePositions.map((pos, i) => ({
       position: pos.name,
@@ -145,7 +140,7 @@ function NewReadingForm() {
 
   return (
     <div className="max-w-page mx-auto px-4 py-8 space-y-6">
-      {shuffling && <ShuffleOverlay count={activePositions.length} onSkip={() => skipShuffle.current()} />}
+      {shuffling &&<ShuffleOverlay count={activePositions.length} question={question} />}
       <div aria-live="polite" aria-atomic="true" className="sr-only">{stepLabel}</div>
 
       <PageTitle>

@@ -29,6 +29,8 @@ import LocalBackups from "@/components/account/LocalBackups";
 import LocalLock from "@/components/account/LocalLock";
 import SettingsIndex from "@/components/SettingsIndex";
 import { SigilMark } from "@/components/ui/AppSigil";
+import { useRevealWait } from "@/components/reveal/useRevealWait";
+import { REVEAL_WAIT_CHOICES } from "@/lib/reveal-wait-core";
 
 export default function SettingsPage() {
   const [me, setMe] = useState<{ username: string; isAdmin: boolean; edition?: string; host?: boolean } | null>(null);
@@ -51,6 +53,7 @@ export default function SettingsPage() {
 
   // Display preferences
   const prefs = usePrefs();
+  const [revealWait, setRevealWait] = useRevealWait();
   // Which card the last change was made in, so "Saved" shows there.
   const [prefsMsg, setPrefsMsg] = useState<{ type: "ok" | "err"; text: string; where: "guide" | "companion" } | null>(null);
 
@@ -365,6 +368,31 @@ export default function SettingsPage() {
               </div>
             </Item>
             )}
+
+            <Item id="opening-wait" label="How long a reading opens">
+              <div className="bg-surface border border-line rounded-card p-5 space-y-4">
+                <div>
+                  <h3 className="font-semibold text-ink-strong">How Long a Reading Opens</h3>
+                  <p className="text-xs text-ink-faint mt-0.5">
+                    Before a new reading is shown, your question stays on the screen while the cards shuffle (or the tea brews, or the
+                    pendulum swings). Choose how long that lasts. &ldquo;I am ready&rdquo; or Escape ends it early. Kept only in this
+                    browser on this device, not in your account.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2" role="group" aria-label="How long a reading opens">
+                  {REVEAL_WAIT_CHOICES.map(({ seconds, label }) => (
+                    <button
+                      key={seconds}
+                      onClick={() => setRevealWait(seconds)}
+                      aria-pressed={revealWait === seconds}
+                      className={`px-4 py-2 min-h-11 rounded-lg border text-sm transition-colors ${choiceClass(revealWait === seconds)}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Item>
 
             <Item id="randomness" label="Card draw randomness">
               <div className="bg-surface border border-line rounded-card p-5 space-y-4">
