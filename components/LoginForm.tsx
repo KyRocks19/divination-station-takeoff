@@ -5,9 +5,13 @@ import { FEATHERED } from "@/lib/edition";
 import { useSearchParams } from "next/navigation";
 import { browserSupportsWebAuthn, startAuthentication } from "@simplewebauthn/browser";
 import AppSigil from "@/components/ui/AppSigil";
+import { Card } from "@/components/ui/Card";
 
-/** The sign-in form. `showJoin` is false on a local copy, which has no invite codes. */
-export default function LoginForm({ showJoin }: { showJoin: boolean }) {
+/**
+ * The sign-in form. `showJoin` is false on a local copy, which has no invite codes. `emptyFolder` is true on a hosted copy whose data folder has
+ * no accounts (lib/local-setup.ts hostedFolderEmpty), so nobody can sign in until whoever runs it points DS_DB_DIR at the right folder.
+ */
+export default function LoginForm({ showJoin, emptyFolder = false }: { showJoin: boolean; emptyFolder?: boolean }) {
   const params = useSearchParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -84,6 +88,13 @@ export default function LoginForm({ showJoin }: { showJoin: boolean }) {
           <h1 className="text-3xl font-bold text-tone-300 tracking-widest">Divination Station</h1>
           <p className="text-ink-faint mt-2 text-sm">A private place for experimenting with randomness and the stories it produces. Divination is a tool that presents you with possibilities you might not have thought of yourself. Tarot, runes, ogham, the I Ching, geomancy, scrying, the pendulum, dice and coins, and your own writing, all can be used to get you out of your own head about your life situation and see it from different angles.</p>
         </div>
+
+        {emptyFolder && (
+          <Card pad="sm" role="status" className="mb-6 text-sm text-ink-soft">
+            The data folder this copy opened has no accounts in it, so nobody can sign in yet. If you look after this copy, check that DS_DB_DIR in
+            .env.local names the folder that holds its data (docs/move-off-neon.md).
+          </Card>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
