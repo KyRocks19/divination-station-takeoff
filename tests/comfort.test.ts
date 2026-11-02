@@ -18,8 +18,11 @@ test("known choices are kept, unknown ones fall back one by one", () => {
     spacing: "roomy",
     motion: "less",
     header: "sticky",
+    sidebar: "overlay",
   });
   assert.equal(parseComfort(JSON.stringify({ header: "scrolls" })).header, "scrolls");
+  assert.equal(parseComfort(JSON.stringify({ sidebar: "push" })).sidebar, "push");
+  assert.equal(parseComfort(JSON.stringify({ sidebar: "left" })).sidebar, "overlay");
   assert.deepEqual(parseComfort(JSON.stringify({ font: "comic", size: 99, spacing: "huge", motion: "none", header: "fixed" })), DEFAULT_COMFORT);
   assert.equal(parseComfort(JSON.stringify({ font: "atkinson", size: "150" })).size, 100, "a size must be a number");
   assert.equal(parseComfort(JSON.stringify({ font: "atkinson" })).font, "atkinson");
@@ -27,12 +30,13 @@ test("known choices are kept, unknown ones fall back one by one", () => {
 
 test("the standard choices set no attribute at all", () => {
   assert.deepEqual(comfortAttributes(DEFAULT_COMFORT), {});
-  assert.deepEqual(comfortAttributes({ font: "opendyslexic", size: 150, spacing: "roomy", motion: "less", header: "scrolls" }), {
+  assert.deepEqual(comfortAttributes({ font: "opendyslexic", size: 150, spacing: "roomy", motion: "less", header: "scrolls", sidebar: "push" }), {
     "data-font": "opendyslexic",
     "data-size": "150",
     "data-spacing": "roomy",
     "data-motion": "less",
     "data-header": "scrolls",
+    "data-sidebar": "push",
   });
 });
 
@@ -66,6 +70,10 @@ test("the head script and the parser agree on every kind of stored value", () =>
     JSON.stringify({ header: "scrolls" }),
     JSON.stringify({ header: "sticky", motion: "less" }),
     JSON.stringify({ header: "x" }),
+    JSON.stringify({ sidebar: "push" }),
+    JSON.stringify({ sidebar: "push", header: "scrolls", font: "lexend" }),
+    JSON.stringify({ sidebar: "overlay" }),
+    JSON.stringify({ sidebar: 1 }),
   ];
   for (const s of samples) assert.deepEqual(runBoot(s), comfortAttributes(parseComfort(s)), String(s));
 });

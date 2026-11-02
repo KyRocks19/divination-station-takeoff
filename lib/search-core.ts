@@ -311,7 +311,7 @@ function pageEntries(): Entry[] {
       label: "Settings",
       href: "/settings",
       note: "Your account",
-      keywords: ["reading comfort", "font", "text size", "less motion", "password", "export", "account"],
+      keywords: ["reading comfort", "font", "text size", "less motion", "layout", "header bar", "side menu", "password", "export", "account"],
     },
     {
       id: "page-colours",

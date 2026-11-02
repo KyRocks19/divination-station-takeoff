@@ -930,9 +930,10 @@ html:has([data-app-header]) {
 /* The full side column floats over the left of the page (owner's request, 2026-10-26). It keeps the narrow column's 3.5rem
    in the row, so the page sits where it does beside the narrow column and does not move when the menu is widened or
    narrowed; the rest of its width lies over the page, above it and with a shadow. Outside the layers so it wins over the
-   utilities the column is written with. */
+   utilities the column is written with. A person who chose "Pushes the page over" (Settings, Layout: data-sidebar="push"
+   on <html>, lib/comfort.ts) gets the column's full width in the row instead, so the page moves over when it is widened. */
 @media (min-width: 64rem) {
-  html:not([data-nav="narrow"]) .sidenav {
+  html:not([data-nav="narrow"]):not([data-sidebar="push"]) .sidenav {
     margin-right: -10.5rem;
     z-index: 40;
     box-shadow: 0.25rem 0 1rem -0.25rem rgb(0 0 0 / 0.45);
